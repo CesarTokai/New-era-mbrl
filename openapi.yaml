@@ -1,0 +1,565 @@
+openapi: 3.0.0
+info:
+  title: MBRL - Autenticación API
+  description: API de autenticación y gestión de contraseñas para el sistema MBRL
+  version: 1.0.0
+  contact:
+    name: MBRL Team
+
+servers:
+  - url: http://localhost:8080
+    description: Servidor Local
+  - url: http://localhost:3000
+    description: Frontend Local
+
+tags:
+  - name: Autenticación
+    description: Endpoints de autenticación y registro
+  - name: Contraseña
+    description: Endpoints de gestión de contraseña
+
+paths:
+  /api/auth/register:
+    post:
+      tags:
+        - Autenticación
+      summary: Registrar nuevo cliente
+      description: Crea una nueva cuenta de cliente en el sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequestDTO'
+            example:
+              name: "Juan Pérez"
+              email: "juan@example.com"
+              password: "SecurePass123!"
+              phone: "+52 5555551234"
+      responses:
+        '201':
+          description: Cliente registrado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseCustomer'
+              example:
+                success: true
+                data:
+                  id: 1
+                  name: "Juan Pérez"
+                  email: "juan@example.com"
+                  phone: "+52 5555551234"
+                message: "Cliente registrado exitosamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseError'
+
+  /api/auth/login:
+    post:
+      tags:
+        - Autenticación
+      summary: Iniciar sesión
+      description: Autentica al usuario y devuelve JWT tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDTO'
+            example:
+              email: "juan@example.com"
+              password: "SecurePass123!"
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseJwtResponse'
+              example:
+                success: true
+                data:
+                  accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  tokenType: "Bearer"
+                  expiresIn: 86400
+                message: "Login exitoso"
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseError'
+
+  /api/auth/refresh:
+    post:
+      tags:
+        - Autenticación
+      summary: Refrescar token de acceso
+      description: Genera un nuevo access token usando el refresh token
+      parameters:
+        - name: refreshToken
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Refresh token obtenido en el login
+      responses:
+        '200':
+          description: Token refrescado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseJwtResponse'
+        '401':
+          description: Refresh token inválido o expirado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseError'
+
+  /api/auth/logout:
+    post:
+      tags:
+        - Autenticación
+      summary: Cerrar sesión
+      description: Invalida los tokens JWT del usuario
+      parameters:
+        - name: accessToken
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Access token a invalidar
+        - name: refreshToken
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Refresh token a invalidar
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logout exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseVoid'
+              example:
+                success: true
+                data: null
+                message: "Logout exitoso"
+        '400':
+          description: Error al procesar logout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseError'
+
+  /api/auth/change-password:
+    post:
+      tags:
+        - Contraseña
+      summary: Cambiar contraseña
+      description: Cambia la contraseña del usuario autenticado
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID del usuario
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequestDTO'
+            example:
+              currentPassword: "OldPass123!"
+              newPassword: "NewPass456!"
+              confirmPassword: "NewPass456!"
+      responses:
+        '200':
+          description: Contraseña actualizada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseVoid'
+              example:
+                success: true
+                data: null
+                message: "Contraseña actualizada exitosamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseError'
+
+  /api/auth/password-status/{userId}:
+    get:
+      tags:
+        - Contraseña
+      summary: Obtener estado de contraseña
+      description: Verifica si la contraseña requiere cambio y días restantes para expiración
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID del usuario
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Estado de contraseña obtenido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponsePasswordStatusDTO'
+              example:
+                success: true
+                data:
+                  changeRequired: false
+                  daysRemaining: 45
+                  expirationDays: 90
+                message: "Estado de contraseña obtenido"
+        '400':
+          description: Error al obtener estado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseError'
+
+  /api/auth/forgot-password:
+    post:
+      tags:
+        - Contraseña
+      summary: Solicitar reset de contraseña
+      description: Genera un token de reset y envía instrucciones al email (sin revelar si el email existe)
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+            format: email
+          description: Email del usuario
+      responses:
+        '200':
+          description: Solicitud procesada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseVoid'
+              example:
+                success: true
+                data: null
+                message: "Si el email existe, recibirás instrucciones para resetear tu contraseña"
+
+  /api/auth/validate-reset-token:
+    get:
+      tags:
+        - Contraseña
+      summary: Validar token de reset
+      description: Verifica si un token de reset de contraseña es válido
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Token de reset de contraseña
+      responses:
+        '200':
+          description: Token válido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseBoolean'
+              example:
+                success: true
+                data: true
+                message: "Token válido"
+        '400':
+          description: Token inválido o expirado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseError'
+
+  /api/auth/reset-password:
+    post:
+      tags:
+        - Contraseña
+      summary: Resetear contraseña
+      description: Cambia la contraseña usando un token de reset válido
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequestDTO'
+            example:
+              token: "abc123def456..."
+              newPassword: "NewPass789!"
+              confirmPassword: "NewPass789!"
+      responses:
+        '200':
+          description: Contraseña reseteada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseVoid'
+              example:
+                success: true
+                data: null
+                message: "Contraseña reseteada exitosamente"
+        '400':
+          description: Error de validación o token inválido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponseError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtenido en el login
+
+  schemas:
+    CustomerRequestDTO:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          description: Nombre completo del cliente
+          example: "Juan Pérez"
+        email:
+          type: string
+          format: email
+          description: Email único del cliente
+          example: "juan@example.com"
+        password:
+          type: string
+          minLength: 8
+          description: Contraseña (mínimo 8 caracteres)
+          example: "SecurePass123!"
+        phone:
+          type: string
+          description: Teléfono del cliente (opcional)
+          example: "+52 5555551234"
+
+    LoginRequestDTO:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email del usuario
+          example: "juan@example.com"
+        password:
+          type: string
+          description: Contraseña del usuario
+          example: "SecurePass123!"
+
+    ChangePasswordRequestDTO:
+      type: object
+      required:
+        - currentPassword
+        - newPassword
+        - confirmPassword
+      properties:
+        currentPassword:
+          type: string
+          description: Contraseña actual
+          example: "OldPass123!"
+        newPassword:
+          type: string
+          minLength: 8
+          description: Nueva contraseña
+          example: "NewPass456!"
+        confirmPassword:
+          type: string
+          minLength: 8
+          description: Confirmación de nueva contraseña
+          example: "NewPass456!"
+
+    ResetPasswordRequestDTO:
+      type: object
+      required:
+        - token
+        - newPassword
+        - confirmPassword
+      properties:
+        token:
+          type: string
+          description: Token de reset válido
+          example: "abc123def456..."
+        newPassword:
+          type: string
+          minLength: 8
+          description: Nueva contraseña
+          example: "NewPass789!"
+        confirmPassword:
+          type: string
+          minLength: 8
+          description: Confirmación de nueva contraseña
+          example: "NewPass789!"
+
+    JwtResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: Token JWT para acceso
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        refreshToken:
+          type: string
+          description: Token JWT para refrescar
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        tokenType:
+          type: string
+          description: Tipo de token
+          example: "Bearer"
+        expiresIn:
+          type: integer
+          description: Segundos hasta que expire el token
+          example: 86400
+
+    PasswordStatusDTO:
+      type: object
+      properties:
+        changeRequired:
+          type: boolean
+          description: Si es requerido cambiar la contraseña
+          example: false
+        daysRemaining:
+          type: integer
+          description: Días restantes antes de que expire
+          example: 45
+        expirationDays:
+          type: integer
+          description: Días de validez total
+          example: 90
+
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: "Juan Pérez"
+        email:
+          type: string
+          format: email
+          example: "juan@example.com"
+        phone:
+          type: string
+          example: "+52 5555551234"
+        createdAt:
+          type: string
+          format: date-time
+
+    ApiResponseCustomer:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/Customer'
+        message:
+          type: string
+          example: "Cliente registrado exitosamente"
+
+    ApiResponseJwtResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/JwtResponse'
+        message:
+          type: string
+          example: "Login exitoso"
+
+    ApiResponsePasswordStatusDTO:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/PasswordStatusDTO'
+        message:
+          type: string
+          example: "Estado de contraseña obtenido"
+
+    ApiResponseBoolean:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: boolean
+          example: true
+        message:
+          type: string
+          example: "Token válido"
+
+    ApiResponseVoid:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: "null"
+          example: null
+        message:
+          type: string
+          example: "Operación exitosa"
+
+    ApiResponseError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        data:
+          type: "null"
+          example: null
+        message:
+          type: string
+          example: "Mensaje de error"
+        errorCode:
+          type: integer
+          example: 400
+
