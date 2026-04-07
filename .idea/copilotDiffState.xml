@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="/ProductRepository (snapshot).java">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="/ProductRepository (snapshot).java" />
+              <option name="originalContent" value="package com.mx.mbrl.repository;&#10;&#10;import com.mx.mbrl.entity.Product;&#10;import org.springframework.data.jpa.repository.JpaRepository;&#10;&#10;public interface ProductRepository extends JpaRepository&lt;Product, Long&gt; {&#10;}&#10;&#10;" />
+              <option name="updatedContent" value="package com.mx.mbrl.repository;&#10;&#10;import com.mx.mbrl.entity.Product;&#10;import org.springframework.data.jpa.repository.JpaRepository;&#10;import java.util.List;&#10;&#10;public interface ProductRepository extends JpaRepository&lt;Product, Long&gt; {&#10;&#9;List&lt;Product&gt; findByCategoryId(Long categoryId);&#10;&#9;List&lt;Product&gt; findByIsActiveTrue();&#10;&#9;List&lt;Product&gt; findByStockLessThanEqualOrderByStockAsc(Integer minStock);&#10;}&#10;&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
