@@ -4,17 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="04614044-9f04-4f3b-a0cc-042bdd72219b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RESUMEN_APIS.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copilotDiffState.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilotDiffState.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mbrl.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/config/SecurityConfig.class" afterDir="false" />
-    </list>
+    <list default="true" id="04614044-9f04-4f3b-a0cc-042bdd72219b" name="Changes" comment="Cambios grandes" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -48,12 +38,12 @@
     &quot;assignee&quot;: &quot;CesarTokai&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/CesarTokai/New-era-mbrl.git&quot;,
-    &quot;accountId&quot;: &quot;18041149-c3c6-47ba-8fd5-9be197422198&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/CesarTokai/New-era-mbrl.git",
+    "accountId": "b9e9817d-ca26-43db-8e22-8b28de8eaf53"
   }
-}</component>
+}]]></component>
   <component name="HttpClientOnboardingState">{
   &quot;isOnboardingCommentShown&quot;: true
 }</component>
@@ -156,8 +146,17 @@
       <workItem from="1775594753736" duration="600000" />
       <workItem from="1775595457895" duration="2765000" />
       <workItem from="1775683122098" duration="26000" />
-      <workItem from="1775683278968" duration="5259000" />
+      <workItem from="1775683278968" duration="5753000" />
     </task>
+    <task id="LOCAL-00001" summary="Cambios grandes">
+      <option name="closed" value="true" />
+      <created>1775688664369</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1775688664369</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -165,7 +164,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add: Unit tests for AuthController with 24 comprehensive test cases covering all 9 endpoints" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add: Unit tests for AuthController with 24 comprehensive test cases covering all 9 endpoints" />
+    <MESSAGE value="Cambios grandes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cambios grandes" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
