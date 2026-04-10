@@ -1,0 +1,120 @@
+/**
+ * AxiosConfig.js
+ * Configuración de Axios con interceptores para JWT
+ *
+ * Este archivo configura todas las solicitudes HTTP para incluir el token JWT
+ * en el header Authorization, cumpliendo con el formato esperado por el backend:
+ * Authorization: Bearer <token>
+ */
+
+import axios from 'axios';
+
+// Crear instancia de Axios con la URL base del backend
+const api = axios.create({
+  baseURL: 'http://localhost:8080',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+/**
+ * INTERCEPTOR DE SOLICITUD
+ * Se ejecuta ANTES de cada solicitud
+ * Agrega el token JWT al header Authorization si existe
+ */
+api.interceptors.request.use(
+  (config) => {
+    // Obtener el token del localStorage
+    const token = localStorage.getItem('accessToken');
+
+    if (token) {
+      // Agregar el token al header Authorization
+      // IMPORTANTE: El formato es "Bearer <token>" (con espacio entre Bearer y el token)
+      config.headers.Authorization = `Bearer ${token}`;
+      console.debug('Token agregado al header:', token.substring(0, 20) + '...');
+    } else {
+      console.debug('No hay token en localStorage');
+    }
+
+    return config;
+  },
+  (error) => {
+    console.error('Error en interceptor de solicitud:', error);
+    return Promise.reject(error);
+  }
+);
+
+/**
+ * INTERCEPTOR DE RESPUESTA
+ * Se ejecuta DESPUÉS de cada respuesta
+ * Maneja errores de autenticación y refresca tokens si es necesario
+ */
+api.interceptors.response.use(
+  (response) => {
+    // Respuesta exitosa, retornarla tal cual
+    return response;
+  },
+  (error) => {
+    const { response } = error;
+
+    if (response?.status === 401) {
+      // Error 401: Token expirado o inválido
+      console.warn('Token expirado (401). Intentando refrescar...');
+
+      // Obtener el refresh token
+      const refreshToken = localStorage.getItem('refreshToken');
+
+      if (refreshToken) {
+        // Intentar refrescar el access token
+        return api.post('/api/auth/refresh', null, {
+          params: { refreshToken }
+        })
+        .then((refreshResponse) => {
+          const { data } = refreshResponse.data;
+
+          // Guardar el nuevo token
+          localStorage.setItem('accessToken', data.accessToken);
+
+          // Reintentar la solicitud original con el nuevo token
+          error.config.headers.Authorization = `Bearer ${data.accessToken}`;
+          return api(error.config);
+        })
+        .catch(() => {
+          // Si el refresh falla, limpiar tokens y redirigir al login
+          console.error('Error refrescando token. Redirigiendo al login...');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('user');
+          window.location.href = '/login';
+          return Promise.reject(error);
+        });
+      } else {
+        // No hay refresh token, limpiar y redirigir
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+        return Promise.reject(error);
+      }
+    }
+
+    if (response?.status === 403) {
+      // Error 403: Forbidden (sin permisos)
+      console.error('Acceso denegado (403). Verifica que tengas los permisos necesarios.');
+      console.error('Detalles:', response.data?.message);
+    }
+
+    // Otros errores
+    console.error('Error en solicitud:', {
+      status: response?.status,
+      message: response?.data?.message,
+      error: error.message
+    });
+
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+

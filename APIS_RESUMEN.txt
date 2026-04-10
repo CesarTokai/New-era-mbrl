@@ -1,0 +1,60 @@
+BASE: http://localhost:8080
+
+=== AUTENTICACIÓN (Sin autenticación requerida) ===
+POST   /api/auth/register          - Registrar usuario
+POST   /api/auth/login             - Login (obtener JWT)
+POST   /api/auth/refresh           - Refrescar access token
+POST   /api/auth/logout            - Logout
+POST   /api/auth/forgot-password   - Reset contraseña
+POST   /api/auth/reset-password    - Aplicar nuevo password
+GET    /api/auth/validate-reset-token - Validar token
+
+=== AUTENTICACIÓN (Con JWT requerido) ===
+POST   /api/auth/change-password   - Cambiar contraseña
+GET    /api/auth/password-status/{userId} - Estado de contraseña
+
+=== PRODUCTOS (JWT + Rol requerido) ===
+GET    /api/products                    - Listar todos
+GET    /api/products/{id}              - Obtener uno
+GET    /api/products/low-stock         - Stock bajo (ADMIN)
+GET    /api/products/{id}/related      - Productos relacionados
+POST   /api/products                    - Crear (ADMIN)
+PUT    /api/products/{id}              - Actualizar (ADMIN)
+DELETE /api/products/{id}              - Eliminar (ADMIN)
+
+=== CLIENTES (JWT + ADMIN) ===
+GET    /api/customers                   - Listar
+GET    /api/customers/{id}             - Obtener
+POST   /api/customers                   - Crear
+PUT    /api/customers/{id}             - Actualizar
+GET    /api/customers/{id}/stats       - Estadísticas
+
+=== INVENTARIO (JWT + ADMIN) ===
+GET    /api/inventory/movements/{productId}      - Movimientos
+GET    /api/inventory/available-stock/{productId} - Stock disponible
+POST   /api/inventory/adjust                      - Ajustar stock
+POST   /api/inventory/add-stock                   - Agregar stock
+POST   /api/inventory/remove-stock                - Remover stock
+
+=== ÓRDENES (JWT + ADMIN) ===
+GET    /api/orders                      - Listar
+GET    /api/orders/{id}                - Obtener
+GET    /api/orders/customer/{customerId} - Por cliente
+POST   /api/orders                      - Crear
+PUT    /api/orders/{id}                - Actualizar
+PATCH  /api/orders/{id}/status         - Cambiar estado
+
+=== REPORTES (JWT + ADMIN) ===
+GET    /api/reports/sales               - Reporte de ventas
+GET    /api/reports/products            - Reporte de productos
+GET    /api/reports/low-stock-alerts    - Alertas de stock
+
+=== IMPORTANTE ===
+Todas las solicitudes protegidas necesitan header:
+Authorization: Bearer <accessToken>
+
+El accessToken se obtiene en /api/auth/login
+
+Roles: USER, ADMIN
+Duración del token: 24 horas
+

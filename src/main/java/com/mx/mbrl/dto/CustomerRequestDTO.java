@@ -15,6 +15,10 @@ public class CustomerRequestDTO {
 	@Size(max = 255, message = "El email no puede exceder 255 caracteres")
 	private String email;
 
+	@NotBlank(message = "La contraseña es requerida")
+	@Size(min = 8, max = 128, message = "La contraseña debe tener entre 8 y 128 caracteres")
+	private String password;
+
 	@Size(max = 20, message = "El teléfono no puede exceder 20 caracteres")
 	private String phone;
 

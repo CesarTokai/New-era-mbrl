@@ -1,5 +1,6 @@
 package com.mx.mbrl.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"subcategories", "parentCategory", "hibernateLazyInitializer", "handler"})
 public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
