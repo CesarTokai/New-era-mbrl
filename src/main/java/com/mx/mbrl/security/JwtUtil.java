@@ -1,9 +1,13 @@
 package com.mx.mbrl.security;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Slf4j
@@ -16,16 +20,19 @@ public class JwtUtil {
 	@Value("${jwt.expiration}")
 	private long jwtExpirationMs;
 
+	private SecretKey getSigningKey() {
+		return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+	}
+
 	public String generateToken(String email, String role) {
 		log.debug("Generando token JWT para: {}", email);
-
 		try {
 			return Jwts.builder()
 					.subject(email)
 					.claim("role", role)
 					.issuedAt(new Date())
 					.expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-					.signWith(SignatureAlgorithm.HS512, jwtSecret)
+					.signWith(getSigningKey())
 					.compact();
 		} catch (Exception e) {
 			log.error("Error generando token JWT: {}", e.getMessage());
@@ -36,10 +43,9 @@ public class JwtUtil {
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parser()
-					.setSigningKey(jwtSecret)
+					.verifyWith(getSigningKey())
 					.build()
 					.parseSignedClaims(token);
-
 			log.debug("Token JWT validado exitosamente");
 			return true;
 		} catch (SecurityException e) {
@@ -53,14 +59,13 @@ public class JwtUtil {
 		} catch (IllegalArgumentException e) {
 			log.error("Claims JWT vacíos: {}", e.getMessage());
 		}
-
 		return false;
 	}
 
 	public String extractUsername(String token) {
 		try {
 			return Jwts.parser()
-					.setSigningKey(jwtSecret)
+					.verifyWith(getSigningKey())
 					.build()
 					.parseSignedClaims(token)
 					.getPayload()
@@ -74,7 +79,7 @@ public class JwtUtil {
 	public String extractRole(String token) {
 		try {
 			return Jwts.parser()
-					.setSigningKey(jwtSecret)
+					.verifyWith(getSigningKey())
 					.build()
 					.parseSignedClaims(token)
 					.getPayload()
@@ -88,12 +93,11 @@ public class JwtUtil {
 	public long getExpirationTime(String token) {
 		try {
 			Date expiration = Jwts.parser()
-					.setSigningKey(jwtSecret)
+					.verifyWith(getSigningKey())
 					.build()
 					.parseSignedClaims(token)
 					.getPayload()
 					.getExpiration();
-
 			return expiration.getTime() - System.currentTimeMillis();
 		} catch (JwtException | IllegalArgumentException e) {
 			log.error("Error obteniendo tiempo de expiración: {}", e.getMessage());
@@ -101,4 +105,3 @@ public class JwtUtil {
 		}
 	}
 }
-

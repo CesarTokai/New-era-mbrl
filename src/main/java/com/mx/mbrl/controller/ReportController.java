@@ -20,7 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 public class ReportController {
 
 	private final ReportService reportService;

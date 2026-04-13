@@ -2,6 +2,7 @@ package com.mx.mbrl.config;
 
 import com.mx.mbrl.security.JwtAuthFilter;
 import com.mx.mbrl.security.RateLimiterFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -57,6 +58,20 @@ public class SecurityConfig {
 				// Configurar sesiones stateless (JWT)
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
+				// Respuestas JSON para errores de autenticación/autorización
+				.exceptionHandling(ex -> ex
+						.authenticationEntryPoint((request, response, authException) -> {
+							response.setContentType("application/json;charset=UTF-8");
+							response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+							response.getWriter().write("{\"success\":false,\"message\":\"Token inválido o expirado. Inicia sesión nuevamente.\",\"status\":401}");
+						})
+						.accessDeniedHandler((request, response, accessDeniedException) -> {
+							response.setContentType("application/json;charset=UTF-8");
+							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+							response.getWriter().write("{\"success\":false,\"message\":\"No tienes permisos para realizar esta acción.\",\"status\":403}");
+						})
+				)
+
 				// Configurar autorización de endpoints
 				.authorizeHttpRequests(authz -> authz
 						// Endpoints públicos
@@ -65,16 +80,22 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.POST, "/api/auth/forgot-password").permitAll()
 						.requestMatchers(HttpMethod.GET, "/api/auth/validate-reset-token").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/auth/reset-password").permitAll()
+						// Imágenes públicas (lectura)
+						.requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
+						// Swagger
 						.requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 						.requestMatchers("/actuator/health").permitAll()
+						
+						// Endpoints de /furniture/ requieren autenticación básica pero no ADMIN específicamente
+						.requestMatchers("/furniture/**").authenticated()
 
 						// El resto requiere autenticación
 						.anyRequest().authenticated()
 				)
 
-			// Agregar Rate Limiter Filter (Order=1) y JWT Filter (Order=2), ambos antes de UsernamePasswordAuthenticationFilter
-			.addFilterBefore(rateLimiterFilter, UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+				// Agregar Rate Limiter Filter (Order=1) y JWT Filter (Order=2), ambos antes de UsernamePasswordAuthenticationFilter
+				.addFilterBefore(rateLimiterFilter, UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
@@ -106,6 +127,4 @@ public class SecurityConfig {
 		return source;
 	}
 }
-
-
 

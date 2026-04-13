@@ -52,7 +52,7 @@ public class BrandController {
 	}
 
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Brand>> createBrand(@RequestBody BrandRequestDTO dto) {
 		log.info("POST /furniture/brands - Creando marca: {}", dto.getName());
 		try {
@@ -73,7 +73,7 @@ public class BrandController {
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Brand>> updateBrand(
 			@PathVariable Long id, @RequestBody BrandRequestDTO dto) {
 		try {
@@ -89,7 +89,7 @@ public class BrandController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Void>> deleteBrand(@PathVariable Long id) {
 		try {
 			Brand brand = brandRepository.findById(id)
@@ -102,4 +102,3 @@ public class BrandController {
 		}
 	}
 }
-

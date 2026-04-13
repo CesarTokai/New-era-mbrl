@@ -15,7 +15,9 @@ public class ProductResponseDTO {
 	private Integer stock;
 	private Integer minStock;
 	private String imageUrl;
+	private Long brandId;
 	private String brandName;
+	private Long categoryId;
 	private String categoryName;
 	private Boolean isActive;
 }

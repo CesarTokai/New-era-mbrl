@@ -189,6 +189,12 @@ public class OrderService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<Order> getAllOrders() {
+		log.debug("Obteniendo todas las órdenes");
+		return orderRepository.findAll();
+	}
+
+	@Transactional(readOnly = true)
 	public List<Order> getOrdersByCustomer(Long customerId) {
 		log.debug("Obteniendo órdenes del cliente ID: {}", customerId);
 

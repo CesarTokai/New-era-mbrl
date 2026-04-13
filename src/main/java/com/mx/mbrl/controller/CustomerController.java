@@ -22,7 +22,7 @@ public class CustomerController {
 	private final CustomerService customerService;
 
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<List<Customer>>> getAllCustomers() {
 		log.info("Obteniendo todos los clientes");
 
@@ -38,7 +38,7 @@ public class CustomerController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Customer>> getCustomerById(@PathVariable Long id) {
 		log.info("Obteniendo cliente ID: {}", id);
 
@@ -58,7 +58,7 @@ public class CustomerController {
 	}
 
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Customer>> createCustomer(@Valid @RequestBody CustomerRequestDTO customerRequestDTO) {
 		log.info("Creando nuevo cliente: {}", customerRequestDTO.getName());
 
@@ -79,7 +79,7 @@ public class CustomerController {
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Customer>> updateCustomer(@PathVariable Long id,
 			@Valid @RequestBody CustomerRequestDTO customerRequestDTO) {
 		log.info("Actualizando cliente ID: {}", id);
@@ -100,7 +100,7 @@ public class CustomerController {
 	}
 
 	@GetMapping("/{id}/stats")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Customer>> getCustomerStats(@PathVariable Long id) {
 		log.info("Obteniendo estadísticas del cliente ID: {}", id);
 

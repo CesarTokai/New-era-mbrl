@@ -61,7 +61,7 @@ public class FurnitureController {
 	}
 
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<ProductResponseDTO>> createFurniture(
 			@Valid @RequestBody ProductRequestDTO dto) {
 		log.info("POST /furniture - Creando producto: {}", dto.getName());
@@ -80,7 +80,7 @@ public class FurnitureController {
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<ProductResponseDTO>> updateFurniture(
 			@PathVariable Long id, @Valid @RequestBody ProductRequestDTO dto) {
 		log.info("PUT /furniture/{} - Actualizando producto", id);
@@ -98,7 +98,7 @@ public class FurnitureController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Void>> deleteFurniture(@PathVariable Long id) {
 		log.info("DELETE /furniture/{} - Eliminando producto", id);
 		try {
@@ -124,7 +124,9 @@ public class FurnitureController {
 				product.getStock(),
 				product.getMinStock(),
 				product.getImageUrl(),
+				product.getBrand() != null ? product.getBrand().getId() : null,
 				product.getBrand() != null ? product.getBrand().getName() : null,
+				product.getCategory() != null ? product.getCategory().getId() : null,
 				product.getCategory() != null ? product.getCategory().getName() : null,
 				product.getIsActive()
 		);

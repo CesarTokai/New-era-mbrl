@@ -59,7 +59,7 @@ public class CategoryController {
 	}
 
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Category>> createCategory(
 			@Valid @RequestBody CategoryRequestDTO dto) {
 		log.info("POST /furniture/categories - Creando categoría: {}", dto.getName());
@@ -97,7 +97,7 @@ public class CategoryController {
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Category>> updateCategory(
 			@PathVariable Long id, @Valid @RequestBody CategoryRequestDTO dto) {
 		log.info("PUT /furniture/categories/{} - Actualizando categoría", id);
@@ -130,7 +130,7 @@ public class CategoryController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Void>> deleteCategory(@PathVariable Long id) {
 		log.info("DELETE /furniture/categories/{} - Eliminando categoría", id);
 		try {

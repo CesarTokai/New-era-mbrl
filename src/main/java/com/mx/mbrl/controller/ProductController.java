@@ -64,7 +64,7 @@ public class ProductController {
 	}
 
 	@GetMapping("/low-stock")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<List<ProductResponseDTO>>> getLowStockProducts() {
 		log.info("Obteniendo productos con stock bajo");
 
@@ -108,7 +108,7 @@ public class ProductController {
 	}
 
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<ProductResponseDTO>> createProduct(@Valid @RequestBody ProductRequestDTO productRequestDTO) {
 		log.info("Creando nuevo producto: {}", productRequestDTO.getName());
 
@@ -130,7 +130,7 @@ public class ProductController {
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<ProductResponseDTO>> updateProduct(@PathVariable Long id,
 			@Valid @RequestBody ProductRequestDTO productRequestDTO) {
 		log.info("Actualizando producto ID: {}", id);
@@ -152,7 +152,7 @@ public class ProductController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id) {
 		log.info("Eliminando producto ID: {}", id);
 
@@ -181,7 +181,9 @@ public class ProductController {
 				product.getStock(),
 				product.getMinStock(),
 				product.getImageUrl(),
+				product.getBrand() != null ? product.getBrand().getId() : null,
 				product.getBrand() != null ? product.getBrand().getName() : null,
+				product.getCategory() != null ? product.getCategory().getId() : null,
 				product.getCategory() != null ? product.getCategory().getName() : null,
 				product.getIsActive()
 		);

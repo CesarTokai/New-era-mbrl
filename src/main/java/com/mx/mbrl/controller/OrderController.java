@@ -80,12 +80,10 @@ public class OrderController {
 				if (customerId != null) {
 					orders = orderService.getOrdersByCustomer(customerId);
 				} else {
-					// Obtener todas las órdenes (implementar en OrderService si es necesario)
-					orders = List.of(); // Placeholder
+					orders = orderService.getAllOrders();
 				}
 			} else {
 				// Si es USER, ver solo sus órdenes
-				// En implementación real, obtendría el customerId del usuario logueado
 				orders = customerId != null ? orderService.getOrdersByCustomer(customerId) : List.of();
 			}
 
@@ -102,7 +100,7 @@ public class OrderController {
 	}
 
 	@PutMapping("/{id}/status")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Void>> updateOrderStatus(@PathVariable Long id,
 			@RequestParam Order.Status status) {
 		log.info("Actualizando estado de orden ID: {} a {}", id, status);
@@ -123,7 +121,7 @@ public class OrderController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<Void>> cancelOrder(@PathVariable Long id) {
 		log.info("Cancelando orden ID: {}", id);
 
