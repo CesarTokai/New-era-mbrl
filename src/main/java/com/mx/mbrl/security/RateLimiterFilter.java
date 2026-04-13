@@ -37,6 +37,10 @@ public class RateLimiterFilter extends OncePerRequestFilter {
 		String method = request.getMethod();
 
 		try {
+			// Rate limiting deshabilitado para desarrollo local (solo localhost)
+			// En producción, descomentar el código de rate limiting
+			
+			/*
 			// Limitar rate limit para login y forgot-password (sin autenticación)
 			if ((requestUri.contains(LOGIN_ENDPOINT) || requestUri.contains(FORGOT_PASSWORD_ENDPOINT)) 
 					&& "POST".equals(method)) {
@@ -61,6 +65,7 @@ public class RateLimiterFilter extends OncePerRequestFilter {
 					return;
 				}
 			}
+			*/
 
 		} catch (Exception e) {
 			log.error("Error en RateLimiterFilter: {}", e.getMessage());

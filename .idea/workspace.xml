@@ -5,34 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="04614044-9f04-4f3b-a0cc-042bdd72219b" name="Changes" comment="Cambios grandes">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/WebMvcConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/ImageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copilotDiffState.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copilotDiffState.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/BrandController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/BrandController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/CategoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/CustomerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/CustomerController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/FurnitureController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/FurnitureController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/InventoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/InventoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/OrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/ReportController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/ReportController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/dto/ProductResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/dto/ProductResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtAuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtAuthFilter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/OrderService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/RateLimiterFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/RateLimiterFilter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/CustomerController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/CustomerController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/InventoryController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/InventoryController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/OrderController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/OrderController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/ProductController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/ProductController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/ReportController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/ReportController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/dto/ProductResponseDTO.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/dto/ProductResponseDTO.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/OrderService$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/OrderService$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/OrderService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/OrderService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/RateLimiterFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/RateLimiterFilter.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -185,7 +164,7 @@
       <workItem from="1775856001836" duration="211000" />
       <workItem from="1775856400820" duration="138000" />
       <workItem from="1775863448182" duration="58000" />
-      <workItem from="1776117808271" duration="2232000" />
+      <workItem from="1776117808271" duration="4561000" />
     </task>
     <task id="LOCAL-00001" summary="Cambios grandes">
       <option name="closed" value="true" />

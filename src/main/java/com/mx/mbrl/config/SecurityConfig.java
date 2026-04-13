@@ -72,26 +72,28 @@ public class SecurityConfig {
 						})
 				)
 
-				// Configurar autorización de endpoints
-				.authorizeHttpRequests(authz -> authz
-						// Endpoints públicos
-						.requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-						.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-						.requestMatchers(HttpMethod.POST, "/api/auth/forgot-password").permitAll()
-						.requestMatchers(HttpMethod.GET, "/api/auth/validate-reset-token").permitAll()
-						.requestMatchers(HttpMethod.POST, "/api/auth/reset-password").permitAll()
-						// Imágenes públicas (lectura)
-						.requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
-						// Swagger
-						.requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-						.requestMatchers("/actuator/health").permitAll()
-						
-						// Endpoints de /furniture/ requieren autenticación básica pero no ADMIN específicamente
-						.requestMatchers("/furniture/**").authenticated()
+			// Configurar autorización de endpoints
+			.authorizeHttpRequests(authz -> authz
+					// Endpoints públicos
+					.requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+					.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+					.requestMatchers(HttpMethod.POST, "/api/auth/forgot-password").permitAll()
+					.requestMatchers(HttpMethod.GET, "/api/auth/validate-reset-token").permitAll()
+					.requestMatchers(HttpMethod.POST, "/api/auth/reset-password").permitAll()
+					// Preflight OPTIONS para CORS
+					.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+					// Imágenes públicas (lectura)
+					.requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
+					// Swagger
+					.requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+					.requestMatchers("/actuator/health").permitAll()
+					
+					// Endpoints de /furniture/ requieren autenticación básica pero no ADMIN específicamente
+					.requestMatchers("/furniture/**").authenticated()
 
-						// El resto requiere autenticación
-						.anyRequest().authenticated()
-				)
+					// El resto requiere autenticación
+					.anyRequest().authenticated()
+			)
 
 				// Agregar Rate Limiter Filter (Order=1) y JWT Filter (Order=2), ambos antes de UsernamePasswordAuthenticationFilter
 				.addFilterBefore(rateLimiterFilter, UsernamePasswordAuthenticationFilter.class)
@@ -109,12 +111,11 @@ public class SecurityConfig {
 			"http://localhost:3000",
 			"http://localhost:4200",
 			"http://localhost:5173",
-			"http://192.168.10.51:5173",
-			"http://192.168.10.51:3000",
-			"http://192.168.10.51:4200",
-			"http://127.0.0.1:5173",
+			"http://localhost:5174",
 			"http://127.0.0.1:3000",
-			"http://127.0.0.1:4200"
+			"http://127.0.0.1:4200",
+			"http://127.0.0.1:5173",
+			"http://127.0.0.1:5174"
 		));
 		corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		corsConfig.setAllowedHeaders(Arrays.asList("*"));
