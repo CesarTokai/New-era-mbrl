@@ -64,16 +64,39 @@ public class FurnitureController {
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<ProductResponseDTO>> createFurniture(
 			@Valid @RequestBody ProductRequestDTO dto) {
-		log.info("POST /furniture - Creando producto: {}", dto.getName());
+		log.info("╔════════════════════════════════════════════════════════════");
+		log.info("║ POST /furniture - CREANDO NUEVO PRODUCTO");
+		log.info("╠════════════════════════════════════════════════════════════");
+		log.info("║ Datos recibidos:");
+		log.info("║   - Nombre: {}", dto.getName());
+		log.info("║   - Descripción: {}", dto.getDescription());
+		log.info("║   - Precio venta: ${}", dto.getPrice());
+		log.info("║   - Precio costo: ${}", dto.getCostPrice());
+		log.info("║   - Stock: {}", dto.getStock());
+		log.info("║   - Stock mínimo: {}", dto.getMinStock());
+		log.info("║   - Imagen URL: {}", dto.getImageUrl());
+		log.info("║   - Marca ID: {}", dto.getBrandId());
+		log.info("║   - Categoría ID: {}", dto.getCategoryId());
+		log.info("╠════════════════════════════════════════════════════════════");
+		
 		try {
 			ProductResponseDTO result = toDTO(productService.create(dto));
+			
+			log.info("║ ✅ ÉXITO - Producto creado:");
+			log.info("║   - ID: {}", result.getId());
+			log.info("║   - Nombre: {}", result.getName());
+			log.info("╚════════════════════════════════════════════════════════════");
+			
 			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(ApiResponse.success(result, "Producto creado exitosamente"));
 		} catch (IllegalArgumentException e) {
+			log.error("║ ❌ ERROR (BAD_REQUEST): {}", e.getMessage());
+			log.error("╚════════════════════════════════════════════════════════════");
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(ApiResponse.error(e.getMessage(), 400));
 		} catch (Exception e) {
-			log.error("Error creando producto: {}", e.getMessage());
+			log.error("║ ❌ ERROR (INTERNAL): {}", e.getMessage(), e);
+			log.error("╚════════════════════════════════════════════════════════════");
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(ApiResponse.error("Error creando producto", 500));
 		}

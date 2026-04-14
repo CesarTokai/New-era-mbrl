@@ -1,10 +1,14 @@
 package com.mx.mbrl.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mx.mbrl.security.JwtAuthFilter;
+import com.mx.mbrl.security.JwtUtil;
 import com.mx.mbrl.security.RateLimiterFilter;
+import com.mx.mbrl.service.RateLimitingService;
+import com.mx.mbrl.service.TokenBlacklistService;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,6 +18,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,12 +31,33 @@ import java.util.Arrays;
 @Slf4j
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
-@EnableMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
-	private final JwtAuthFilter jwtAuthFilter;
-	private final RateLimiterFilter rateLimiterFilter;
+	@Autowired
+	private UserDetailsService userDetailsService;
+
+	@Autowired
+	private TokenBlacklistService tokenBlacklistService;
+
+	@Autowired
+	private JwtUtil jwtUtil;
+
+	@Autowired
+	private RateLimitingService rateLimitingService;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	@Bean
+	public JwtAuthFilter jwtAuthFilter() {
+		return new JwtAuthFilter(jwtUtil, userDetailsService, tokenBlacklistService);
+	}
+
+	@Bean
+	public RateLimiterFilter rateLimiterFilter() {
+		return new RateLimiterFilter(rateLimitingService, objectMapper);
+	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -45,7 +71,9 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain securityFilterChain(HttpSecurity http, 
+			JwtAuthFilter jwtAuthFilter,
+			RateLimiterFilter rateLimiterFilter) throws Exception {
 		log.info("Configurando cadena de filtros de seguridad");
 
 		http
@@ -72,35 +100,35 @@ public class SecurityConfig {
 						})
 				)
 
-			// Configurar autorización de endpoints
-			.authorizeHttpRequests(authz -> authz
-					// Endpoints públicos
-					.requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-					.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-					.requestMatchers(HttpMethod.POST, "/api/auth/forgot-password").permitAll()
-					.requestMatchers(HttpMethod.GET, "/api/auth/validate-reset-token").permitAll()
-					.requestMatchers(HttpMethod.POST, "/api/auth/reset-password").permitAll()
-					// Preflight OPTIONS para CORS
-					.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-					// Imágenes públicas (lectura)
-					.requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
-					// Swagger
-					.requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-					.requestMatchers("/actuator/health").permitAll()
-					
-					// Endpoints de /furniture/ requieren autenticación básica pero no ADMIN específicamente
-					.requestMatchers("/furniture/**").authenticated()
+		// Configurar autorización de endpoints
+		.authorizeHttpRequests(authz -> authz
+				// ── Endpoints públicos (sin JWT) ──────────────────────────────────
+				.requestMatchers(HttpMethod.POST,  "/api/auth/register").permitAll()
+				.requestMatchers(HttpMethod.POST,  "/api/auth/login").permitAll()
+				.requestMatchers(HttpMethod.POST,  "/api/auth/forgot-password").permitAll()
+				.requestMatchers(HttpMethod.GET,   "/api/auth/validate-reset-token").permitAll()
+				.requestMatchers(HttpMethod.POST,  "/api/auth/reset-password").permitAll()
+				// Preflight CORS
+				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+				// Imágenes públicas (lectura)
+				.requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
+				// Swagger / OpenAPI
+				.requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+				.requestMatchers("/actuator/health").permitAll()
 
-					// El resto requiere autenticación
-					.anyRequest().authenticated()
-			)
+				// ── Endpoints protegidos (requieren JWT válido) ────────────────────
+				// /furniture/** y /api/** — cualquier usuario autenticado (USER o ADMIN)
+				.requestMatchers("/furniture/**").authenticated()
+				.anyRequest().authenticated()
+		)
 
-				// Agregar Rate Limiter Filter (Order=1) y JWT Filter (Order=2), ambos antes de UsernamePasswordAuthenticationFilter
-				.addFilterBefore(rateLimiterFilter, UsernamePasswordAuthenticationFilter.class)
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+			// RateLimiterFilter corre antes del JwtAuthFilter, y ambos antes de UsernamePasswordAuthenticationFilter
+			.addFilterBefore(rateLimiterFilter, UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
+
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {

@@ -14,6 +14,7 @@ import com.mx.mbrl.repository.UserRepository;
 import com.mx.mbrl.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,10 @@ public class AuthService {
 	private final JwtUtil jwtUtil;
 	private final RefreshTokenService refreshTokenService;
 	private final TokenBlacklistService tokenBlacklistService;
+
+	// Lee la expiración real del access token desde application.properties
+	@Value("${jwt.expiration:86400000}")
+	private long jwtExpirationMs;
 
 	private static final int PASSWORD_CHANGE_DAYS = 90;
 
@@ -101,7 +106,7 @@ public class AuthService {
 		response.setUsername(user.getUsername());
 		response.setEmail(user.getEmail());
 		response.setRole(user.getRole().name());
-		response.setExpiresIn(86400000L); // 24 horas
+		response.setExpiresIn(jwtExpirationMs); // Valor real desde application.properties
 
 		return response;
 	}
@@ -122,13 +127,13 @@ public class AuthService {
 		// Construir respuesta
 		JwtResponse response = new JwtResponse();
 		response.setAccessToken(newAccessToken);
-		response.setRefreshToken(refreshToken); // Reutilizar mismo refresh token
+		response.setRefreshToken(refreshToken); // Refresh token no rotativo (reutilizar)
 		response.setType("Bearer");
 		response.setId(user.getId());
 		response.setUsername(user.getUsername());
 		response.setEmail(user.getEmail());
 		response.setRole(user.getRole().name());
-		response.setExpiresIn(86400000L); // 24 horas
+		response.setExpiresIn(jwtExpirationMs); // Valor real desde application.properties
 
 		return response;
 	}
@@ -181,11 +186,14 @@ public class AuthService {
 			throw new IllegalArgumentException("La contraseña actual es incorrecta");
 		}
 
-		// Registrar cambio en historial
+		// Codificar nueva contraseña una sola vez
+		String newHashedPassword = passwordEncoder.encode(changePasswordRequest.getNewPassword());
+
+		// Registrar cambio en historial (hash anterior y nuevo)
 		PasswordHistory history = new PasswordHistory();
 		history.setUser(user);
 		history.setOldPasswordHash(user.getPassword());
-		history.setNewPasswordHash(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+		history.setNewPasswordHash(newHashedPassword);
 		history.setChangedAt(LocalDateTime.now());
 		history.setReason("USER_REQUEST");
 
@@ -193,7 +201,6 @@ public class AuthService {
 		log.debug("Cambio de contraseña registrado en historial para usuario ID: {}", userId);
 
 		// Actualizar contraseña del usuario
-		String newHashedPassword = passwordEncoder.encode(changePasswordRequest.getNewPassword());
 		user.setPassword(newHashedPassword);
 		user.setLastPasswordChangeDate(LocalDateTime.now());
 

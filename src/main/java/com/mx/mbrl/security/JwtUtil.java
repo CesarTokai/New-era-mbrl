@@ -57,18 +57,20 @@ public class JwtUtil {
 					.verifyWith(secretKey)
 					.build()
 					.parseSignedClaims(token);
-			log.info("[JWT] Token VÁLIDO ✓");
+			log.debug("[JWT] Token VÁLIDO ✓");
 			return true;
 		} catch (ExpiredJwtException e) {
-			log.warn("[JWT] ❌ Token EXPIRADO — el usuario debe volver a iniciar sesión");
+			log.warn("[JWT] ❌ Token EXPIRADO (exp: {}): {}", e.getClaims().getExpiration(), e.getMessage());
 		} catch (MalformedJwtException e) {
 			log.warn("[JWT] ❌ Token MALFORMADO: {}", e.getMessage());
 		} catch (SecurityException e) {
-			log.warn("[JWT] ❌ Firma INVÁLIDA — posible token de otro servidor: {}", e.getMessage());
+			log.warn("[JWT] ❌ Firma INVÁLIDA (¿secreto incorrecto?): {}", e.getMessage());
 		} catch (UnsupportedJwtException e) {
 			log.warn("[JWT] ❌ Token NO SOPORTADO: {}", e.getMessage());
 		} catch (IllegalArgumentException e) {
 			log.warn("[JWT] ❌ Token VACÍO o NULO: {}", e.getMessage());
+		} catch (Exception e) {
+			log.error("[JWT] ❌ Error inesperado validando token: {} — {}", e.getClass().getSimpleName(), e.getMessage());
 		}
 		return false;
 	}

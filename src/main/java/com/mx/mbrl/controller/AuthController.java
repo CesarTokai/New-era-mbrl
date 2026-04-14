@@ -2,15 +2,19 @@ package com.mx.mbrl.controller;
 
 import com.mx.mbrl.dto.*;
 import com.mx.mbrl.entity.Customer;
+import com.mx.mbrl.entity.User;
+import com.mx.mbrl.repository.UserRepository;
 import com.mx.mbrl.service.AuthService;
-import com.mx.mbrl.service.CustomerService;
 import com.mx.mbrl.service.PasswordResetService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -20,15 +24,15 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
 	private final AuthService authService;
-	private final CustomerService customerService;
 	private final PasswordResetService passwordResetService;
+	private final UserRepository userRepository;
 
 	@PostMapping("/register")
-	public ResponseEntity<ApiResponse<Customer>> register(@Valid @RequestBody CustomerRequestDTO customerRequestDTO) {
-		log.info("Registrando nuevo cliente: {}", customerRequestDTO.getName());
+	public ResponseEntity<ApiResponse<Customer>> register(@Valid @RequestBody CustomerRequestDTO dto) {
+		log.info("Registrando nuevo cliente: {}", dto.getName());
 
 		try {
-			Customer customer = authService.register(customerRequestDTO);
+			Customer customer = authService.register(dto);
 			return ResponseEntity.status(HttpStatus.CREATED)
 					.body(ApiResponse.success(customer, "Cliente registrado exitosamente"));
 		} catch (IllegalArgumentException e) {
@@ -39,11 +43,11 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<ApiResponse<JwtResponse>> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
-		log.info("Login para usuario: {}", loginRequestDTO.getEmail());
+	public ResponseEntity<ApiResponse<JwtResponse>> login(@Valid @RequestBody LoginRequestDTO dto) {
+		log.info("Login para usuario: {}", dto.getEmail());
 
 		try {
-			JwtResponse response = authService.login(loginRequestDTO);
+			JwtResponse response = authService.login(dto);
 			return ResponseEntity.ok(ApiResponse.success(response, "Login exitoso"));
 		} catch (IllegalArgumentException e) {
 			log.error("Error en login: {}", e.getMessage());
@@ -52,6 +56,11 @@ public class AuthController {
 		}
 	}
 
+	/**
+	 * Renueva el access token usando el refresh token.
+	 * El refreshToken se envía en el body como JSON: { "refreshToken": "..." }
+	 * o como @RequestParam para compatibilidad con clientes existentes.
+	 */
 	@PostMapping("/refresh")
 	public ResponseEntity<ApiResponse<JwtResponse>> refreshToken(@RequestParam String refreshToken) {
 		log.info("Refrescando access token");
@@ -66,10 +75,24 @@ public class AuthController {
 		}
 	}
 
+	/**
+	 * Cierra la sesión del usuario.
+	 * - El access token se lee automáticamente del header Authorization (no hace falta enviarlo aparte).
+	 * - El refresh token se envía como @RequestParam (es un UUID simple, no un JWT).
+	 *
+	 * Ejemplo de llamada:
+	 *   POST /api/auth/logout?refreshToken=uuid-aqui
+	 *   Authorization: Bearer <access_token>
+	 */
 	@PostMapping("/logout")
+	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<ApiResponse<Void>> logout(
-			@RequestParam(required = false) String accessToken,
+			HttpServletRequest request,
 			@RequestParam(required = false) String refreshToken) {
+
+		// Extraer el access token del header Authorization (ya viene en la petición)
+		String accessToken = extractBearerToken(request);
+
 		log.info("Logout de usuario");
 
 		try {
@@ -82,15 +105,29 @@ public class AuthController {
 		}
 	}
 
+	/**
+	 * Cambia la contraseña del usuario autenticado.
+	 * El userId se obtiene del JWT — no hace falta enviarlo.
+	 *
+	 * Body: { "oldPassword": "...", "newPassword": "...", "confirmPassword": "..." }
+	 */
 	@PostMapping("/change-password")
 	@PreAuthorize("isAuthenticated()")
 	public ResponseEntity<ApiResponse<Void>> changePassword(
-			@RequestParam Long userId,
-			@Valid @RequestBody ChangePasswordRequestDTO changePasswordRequest) {
+			Authentication authentication,
+			@Valid @RequestBody ChangePasswordRequestDTO dto) {
+
+		// Obtener userId desde el JWT (el email está en authentication.getName())
+		Long userId = getUserIdFromAuth(authentication);
+		if (userId == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ApiResponse.error("No se pudo identificar al usuario autenticado", 401));
+		}
+
 		log.info("Cambiando contraseña para usuario ID: {}", userId);
 
 		try {
-			authService.changePassword(userId, changePasswordRequest);
+			authService.changePassword(userId, dto);
 			return ResponseEntity.ok(ApiResponse.success(null, "Contraseña actualizada exitosamente"));
 		} catch (IllegalArgumentException e) {
 			log.error("Error cambiando contraseña: {}", e.getMessage());
@@ -99,9 +136,20 @@ public class AuthController {
 		}
 	}
 
-	@GetMapping("/password-status/{userId}")
+	/**
+	 * Retorna el estado de expiración de contraseña del usuario autenticado.
+	 * No requiere pasar userId — se obtiene del JWT.
+	 */
+	@GetMapping("/password-status")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<ApiResponse<PasswordStatusDTO>> getPasswordStatus(@PathVariable Long userId) {
+	public ResponseEntity<ApiResponse<PasswordStatusDTO>> getPasswordStatus(Authentication authentication) {
+
+		Long userId = getUserIdFromAuth(authentication);
+		if (userId == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+					.body(ApiResponse.error("No se pudo identificar al usuario autenticado", 401));
+		}
+
 		log.info("Verificando estado de contraseña para usuario ID: {}", userId);
 
 		try {
@@ -127,25 +175,19 @@ public class AuthController {
 
 		try {
 			passwordResetService.generateResetToken(email);
-			// No revelar si el email existe o no (security best practice)
-			return ResponseEntity.ok(ApiResponse.success(null, "Si el email existe, recibirás instrucciones para resetear tu contraseña"));
-		} catch (Exception e) {
-			log.error("Error en forgot password: {}", e.getMessage());
-			// Retornar mensaje genérico
-			return ResponseEntity.ok(ApiResponse.success(null, "Si el email existe, recibirás instrucciones para resetear tu contraseña"));
+		} catch (Exception ignored) {
+			// No revelar si el email existe (security best practice)
 		}
+		return ResponseEntity.ok(ApiResponse.success(null,
+				"Si el email existe, recibirás instrucciones para resetear tu contraseña"));
 	}
 
 	@PostMapping("/reset-password")
-	public ResponseEntity<ApiResponse<Void>> resetPassword(@Valid @RequestBody ResetPasswordRequestDTO resetPasswordRequest) {
+	public ResponseEntity<ApiResponse<Void>> resetPassword(@Valid @RequestBody ResetPasswordRequestDTO dto) {
 		log.info("Reset de contraseña con token");
 
 		try {
-			passwordResetService.resetPassword(
-					resetPasswordRequest.getToken(),
-					resetPasswordRequest.getNewPassword(),
-					resetPasswordRequest.getConfirmPassword()
-			);
+			passwordResetService.resetPassword(dto.getToken(), dto.getNewPassword(), dto.getConfirmPassword());
 			return ResponseEntity.ok(ApiResponse.success(null, "Contraseña reseteada exitosamente"));
 		} catch (IllegalArgumentException e) {
 			log.error("Error en reset de contraseña: {}", e.getMessage());
@@ -167,6 +209,25 @@ public class AuthController {
 					.body(ApiResponse.error(e.getMessage(), 400));
 		}
 	}
+
+	// ── Helpers privados ──────────────────────────────────────────────────────
+
+	/** Extrae el Bearer token del header Authorization. */
+	private String extractBearerToken(HttpServletRequest request) {
+		String header = request.getHeader("Authorization");
+		if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
+			return header.substring(7);
+		}
+		return null;
+	}
+
+	/** Obtiene el userId a partir del email almacenado en el JWT (Authentication.getName()). */
+	private Long getUserIdFromAuth(Authentication authentication) {
+		if (authentication == null || !StringUtils.hasText(authentication.getName())) {
+			return null;
+		}
+		return userRepository.findByEmail(authentication.getName())
+				.map(User::getId)
+				.orElse(null);
+	}
 }
-
-

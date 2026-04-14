@@ -7,6 +7,7 @@ import com.mx.mbrl.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
@@ -109,6 +110,18 @@ public class RefreshTokenService {
 				.forEach(token -> refreshTokenRepository.deleteById(token.getId()));
 
 		log.debug("Refresh tokens expirados eliminados");
+	}
+
+	/** Limpieza automática cada 24h — evita que los tokens expirados acumulen en BD. */
+	@Scheduled(fixedDelay = 86400000) // cada 24 horas
+	@Transactional
+	public void scheduledCleanup() {
+		log.info("Ejecutando limpieza programada de refresh tokens expirados");
+		try {
+			deleteExpiredTokens();
+		} catch (Exception e) {
+			log.error("Error durante limpieza de refresh tokens: {}", e.getMessage());
+		}
 	}
 }
 
