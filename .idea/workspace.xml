@@ -5,64 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="04614044-9f04-4f3b-a0cc-042bdd72219b" name="Changes" comment="Cambios grandes">
-      <change afterPath="$PROJECT_DIR$/docs/APIS_COMPLETO.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/APIS_RESUMEN.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/APIS_RESUMIDAS.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/API_FURNITURE_CREATE.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/AdminDashboard.vue.example" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/AdminDashboard.vue.simple" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/AuthController_Postman_Collection.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/AxiosConfig.js.example" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/DOCUMENTACION.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/GUIA_PRUEBAS_DETALLADA.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/IMPLEMENTATION_SUMMARY.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/MANUAL_PRUEBAS_INSOMNIA.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/PRUEBAS_UNITARIAS.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/RESUMEN_APIS.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/RESUMEN_PROBLEMAS_RESUELTOS.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/SOLUCION_403_FRONTEND.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/SOLUCION_CORS_LOCALHOST.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/SOLUCION_LOGIN.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/VERIFICACION_FINAL.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/services.example.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AGENTS.md" beforeDir="false" afterPath="$PROJECT_DIR$/AGENTS.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/APIS_COMPLETO.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/APIS_RESUMEN.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/APIS_RESUMIDAS.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AdminDashboard.vue.example" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AdminDashboard.vue.simple" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AuthController_Postman_Collection.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/AxiosConfig.js.example" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/GUIA_PRUEBAS_DETALLADA.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/HELP.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/IMPLEMENTATION_SUMMARY.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/MANUAL_PRUEBAS_INSOMNIA.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PRUEBAS_UNITARIAS.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RESUMEN_APIS.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RESUMEN_PROBLEMAS_RESUELTOS.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SOLUCION_403_FRONTEND.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SOLUCION_CORS_LOCALHOST.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SOLUCION_LOGIN.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/VERIFICACION_FINAL.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/services.example.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/MbrlApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/MbrlApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/FurnitureController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/FurnitureController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtAuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtAuthFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/RateLimiterFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/RateLimiterFilter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/JwtTokenProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/JwtTokenProvider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/RefreshTokenService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/RefreshTokenService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtAuthFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtAuthFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtUtil.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/RateLimiterFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/RateLimiterFilter.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -198,6 +145,9 @@
       </set>
     </attachedChunks>
   </component>
+  <component name="StructureViewState">
+    <option name="selectedTab" value="Logical" />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="04614044-9f04-4f3b-a0cc-042bdd72219b" name="Changes" comment="" />
@@ -223,7 +173,8 @@
       <workItem from="1776117808271" duration="4763000" />
       <workItem from="1776175500370" duration="6000" />
       <workItem from="1776197194624" duration="3240000" />
-      <workItem from="1776205864929" duration="1398000" />
+      <workItem from="1776205864929" duration="1517000" />
+      <workItem from="1776207607662" duration="314000" />
     </task>
     <task id="LOCAL-00001" summary="Cambios grandes">
       <option name="closed" value="true" />

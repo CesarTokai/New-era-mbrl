@@ -1,6 +1,5 @@
 package com.mx.mbrl.security;
 
-import com.mx.mbrl.service.TokenBlacklistService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,7 +21,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
 	private final UserDetailsService userDetailsService;
-	private final TokenBlacklistService tokenBlacklistService;
 
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 	private static final String BEARER_PREFIX = "Bearer ";
@@ -41,10 +39,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 			} else {
 				log.debug("[JWT] Token recibido para: {} {}", request.getMethod(), requestUri);
 
-				// Verificar blacklist
-				if (tokenBlacklistService.isTokenBlacklisted(jwt)) {
-					log.warn("[JWT] Token en blacklist para: {}", requestUri);
-				} else if (!jwtUtil.validateToken(jwt)) {
+				if (!jwtUtil.validateToken(jwt)) {
 					log.warn("[JWT] Token INVÁLIDO para: {} {}", request.getMethod(), requestUri);
 				} else {
 					String email = jwtUtil.extractUsername(jwt);
@@ -65,7 +60,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		} catch (Exception e) {
 			log.error("[JWT] Error procesando token para {}: {} — {}",
 					requestUri, e.getClass().getSimpleName(), e.getMessage());
-			// Limpiar contexto de seguridad ante cualquier error inesperado
 			SecurityContextHolder.clearContext();
 		}
 
