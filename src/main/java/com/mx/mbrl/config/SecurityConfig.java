@@ -3,7 +3,6 @@ package com.mx.mbrl.config;
 import com.mx.mbrl.security.JwtAuthFilter;
 import com.mx.mbrl.security.JwtUtil;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +22,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
+import java.util.List;
 
-@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -43,7 +42,6 @@ public class SecurityConfig {
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		log.info("Configurando BCryptPasswordEncoder");
 		return new BCryptPasswordEncoder();
 	}
 
@@ -54,52 +52,45 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
-		log.info("Configurando cadena de filtros de seguridad");
-
 		http
-				.csrf(csrf -> csrf.disable())
-				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.exceptionHandling(ex -> ex
-						.authenticationEntryPoint((request, response, authException) -> {
-							response.setContentType("application/json;charset=UTF-8");
-							response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-							response.getWriter().write("{\"success\":false,\"message\":\"Token inválido o expirado. Inicia sesión nuevamente.\",\"status\":401}");
-						})
-						.accessDeniedHandler((request, response, accessDeniedException) -> {
-							response.setContentType("application/json;charset=UTF-8");
-							response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-							response.getWriter().write("{\"success\":false,\"message\":\"No tienes permisos para realizar esta acción.\",\"status\":403}");
-						})
-				)
-				.authorizeHttpRequests(authz -> authz
-						// ── Endpoints públicos (sin JWT) ──────────────────────
-						.requestMatchers(HttpMethod.POST,  "/api/auth/register").permitAll()
-						.requestMatchers(HttpMethod.POST,  "/api/auth/login").permitAll()
-						.requestMatchers(HttpMethod.POST,  "/api/auth/forgot-password").permitAll()
-						.requestMatchers(HttpMethod.GET,   "/api/auth/validate-reset-token").permitAll()
-						.requestMatchers(HttpMethod.POST,  "/api/auth/reset-password").permitAll()
-						// Preflight CORS
-						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-						// Imágenes públicas
-						.requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
-						// Swagger / OpenAPI
-						.requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-						.requestMatchers("/actuator/health").permitAll()
-						// ── Endpoints protegidos (requieren JWT) ─────────────
-						.anyRequest().authenticated()
-				)
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+			.csrf(csrf -> csrf.disable())
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.exceptionHandling(ex -> ex
+				.authenticationEntryPoint((req, res, e) -> {
+					res.setContentType("application/json;charset=UTF-8");
+					res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+					res.getWriter().write("{\"success\":false,\"message\":\"Token inválido o no enviado. Inicia sesión en POST /api/auth/login\",\"status\":401}");
+				})
+				.accessDeniedHandler((req, res, e) -> {
+					res.setContentType("application/json;charset=UTF-8");
+					res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+					res.getWriter().write("{\"success\":false,\"message\":\"No tienes permisos para esta acción.\",\"status\":403}");
+				})
+			)
+			.authorizeHttpRequests(authz -> authz
+				// ── Públicos (sin JWT) ──────────────────────────────────
+				.requestMatchers(HttpMethod.POST,    "/api/auth/register").permitAll()
+				.requestMatchers(HttpMethod.POST,    "/api/auth/login").permitAll()
+				.requestMatchers(HttpMethod.POST,    "/api/auth/forgot-password").permitAll()
+				.requestMatchers(HttpMethod.GET,     "/api/auth/validate-reset-token").permitAll()
+				.requestMatchers(HttpMethod.POST,    "/api/auth/reset-password").permitAll()
+				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+				.requestMatchers(HttpMethod.GET,     "/uploads/**").permitAll()
+				.requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+				.requestMatchers("/actuator/health").permitAll()
+				// ── Protegidos (requieren Authorization: Bearer <token>) ─
+				.anyRequest().authenticated()
+			)
+			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}
 
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
-		log.info("Configurando CORS");
-
-		CorsConfiguration corsConfig = new CorsConfiguration();
-		corsConfig.setAllowedOrigins(Arrays.asList(
+		CorsConfiguration cfg = new CorsConfiguration();
+		cfg.setAllowedOrigins(Arrays.asList(
 			"http://localhost:3000",
 			"http://localhost:4200",
 			"http://localhost:5173",
@@ -109,14 +100,13 @@ public class SecurityConfig {
 			"http://127.0.0.1:5173",
 			"http://127.0.0.1:5174"
 		));
-		corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-		corsConfig.setAllowedHeaders(Arrays.asList("*"));
-		corsConfig.setAllowCredentials(true);
-		corsConfig.setMaxAge(3600L);
+		cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+		cfg.setAllowedHeaders(List.of("*"));
+		cfg.setAllowCredentials(true);
+		cfg.setMaxAge(3600L);
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", corsConfig);
-
+		source.registerCorsConfiguration("/**", cfg);
 		return source;
 	}
 }

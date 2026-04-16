@@ -34,15 +34,8 @@ public class User {
 	@Column(name = "created_at", columnDefinition = "TIMESTAMP")
 	private LocalDateTime createdAt;
 
+	// Se actualiza al cambiar contraseña; null = nunca cambiada (no bloquea el acceso)
 	@Column(name = "last_password_change_date")
 	private LocalDateTime lastPasswordChangeDate;
-
-	public boolean isPasswordChangeRequired() {
-		if (lastPasswordChangeDate == null) {
-			return true; // Nunca ha cambiado, forzar cambio
-		}
-		LocalDateTime ninetyDaysAgo = LocalDateTime.now().minusDays(90);
-		return lastPasswordChangeDate.isBefore(ninetyDaysAgo);
-	}
 }
 

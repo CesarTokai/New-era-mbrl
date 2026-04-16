@@ -1,9 +1,7 @@
 package com.mx.mbrl.service;
 
-import com.mx.mbrl.entity.PasswordHistory;
 import com.mx.mbrl.entity.PasswordResetToken;
 import com.mx.mbrl.entity.User;
-import com.mx.mbrl.repository.PasswordHistoryRepository;
 import com.mx.mbrl.repository.PasswordResetTokenRepository;
 import com.mx.mbrl.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,6 @@ public class PasswordResetService {
 
 	private final PasswordResetTokenRepository passwordResetTokenRepository;
 	private final UserRepository userRepository;
-	private final PasswordHistoryRepository passwordHistoryRepository;
 	private final EmailService emailService;
 	private final PasswordEncoder passwordEncoder;
 
@@ -121,16 +118,6 @@ public class PasswordResetService {
 			throw new IllegalArgumentException("La nueva contraseña no puede ser igual a la actual");
 		}
 
-		// Registrar cambio en historial
-		PasswordHistory history = new PasswordHistory();
-		history.setUser(user);
-		history.setOldPasswordHash(user.getPassword());
-		history.setNewPasswordHash(passwordEncoder.encode(newPassword));
-		history.setChangedAt(LocalDateTime.now());
-		history.setReason("PASSWORD_RESET");
-
-		passwordHistoryRepository.save(history);
-		log.debug("Cambio de contraseña registrado en historial para usuario ID: {}", user.getId());
 
 		// Actualizar contraseña
 		user.setPassword(passwordEncoder.encode(newPassword));

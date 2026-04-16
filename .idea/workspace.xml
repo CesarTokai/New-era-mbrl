@@ -6,10 +6,41 @@
   <component name="ChangeListManager">
     <list default="true" id="04614044-9f04-4f3b-a0cc-042bdd72219b" name="Changes" comment="Cambios grandes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/MbrlApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/MbrlApplication.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/AuditLog.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/BlacklistedToken.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/PasswordHistory.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/RefreshToken.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/repository/AuditLogRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/repository/BlacklistedTokenRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/repository/PasswordHistoryRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/repository/RefreshTokenRepository.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtAuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtAuthFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/RateLimiterFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/JwtTokenProvider.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/PasswordResetService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/PasswordResetService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/RateLimitingService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/RefreshTokenService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/TokenBlacklistService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/MbrlApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/MbrlApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/entity/AuditLog$Operation.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/entity/AuditLog.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/entity/BlacklistedToken.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/entity/PasswordHistory.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/entity/RefreshToken.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/repository/AuditLogRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/repository/BlacklistedTokenRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/repository/PasswordHistoryRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/repository/RefreshTokenRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/RateLimiterFilter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/JwtTokenProvider.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/PasswordResetService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/PasswordResetService.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/RateLimitingService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/RefreshTokenService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/TokenBlacklistService.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -174,7 +205,10 @@
       <workItem from="1776175500370" duration="6000" />
       <workItem from="1776197194624" duration="3240000" />
       <workItem from="1776205864929" duration="1517000" />
-      <workItem from="1776207607662" duration="314000" />
+      <workItem from="1776207607662" duration="397000" />
+      <workItem from="1776261818998" duration="594000" />
+      <workItem from="1776283350379" duration="3440000" />
+      <workItem from="1776358983735" duration="712000" />
     </task>
     <task id="LOCAL-00001" summary="Cambios grandes">
       <option name="closed" value="true" />

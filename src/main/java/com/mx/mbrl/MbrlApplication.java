@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * Stack: Spring Boot 3.5.5 · Java 17 · MySQL · JWT · Spring Security
  *
  * Módulos principales:
- *   - Autenticación JWT con refresh token y blacklist   → /api/auth/**
+ *   - Autenticación JWT simple (login → Bearer token)    → /api/auth/**
  *   - Gestión de productos/muebles con soft-delete       → /api/products/** · /furniture/**
  *   - Marcas y categorías de producto                   → /api/brands/**  · /api/categories/**
  *   - Clientes y pedidos con ítems                      → /api/customers/** · /api/orders/**
@@ -18,20 +18,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *   - Subida de imágenes (disco local)                  → /api/images/**
  *   - Reportes y métricas de dashboard                  → /api/reports/**
  *
- * Seguridad:
+ * Seguridad (simple y funcional):
  *   - Sesión stateless (sin HttpSession).
  *   - Rutas públicas: /api/auth/register · /api/auth/login · /api/auth/forgot-password
  *     /api/auth/validate-reset-token · /api/auth/reset-password · GET /uploads/** · Swagger
- *   - Todo lo demás requiere Bearer JWT válido.
- *   - Rate limiting aplicado mediante RateLimiterFilter.
- *   - Contraseñas expiran cada 90 días.
+ *   - Todo lo demás requiere header: Authorization: Bearer &lt;token&gt;
+ *   - El token se obtiene con POST /api/auth/login y expira en 24 h (jwt.expiration).
  *
  * Configuración mínima necesaria en application.properties:
  *   spring.datasource.url, username, password (MySQL)
- *   jwt.secret, jwt.expiration, jwt.refresh-expiration
- *   spring.mail.* (para reset de contraseña por email)
+ *   jwt.secret, jwt.expiration
+ *   spring.mail.* (solo para reset de contraseña por email)
  *
- * @EnableScheduling habilita tareas programadas (limpieza de tokens expirados, etc.)
+ * @EnableScheduling habilita limpieza periódica de tokens de reset expirados
  */
 @SpringBootApplication
 @EnableScheduling
