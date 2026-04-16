@@ -29,12 +29,13 @@ public class CategoryController {
 	@GetMapping
 	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<List<Category>>> getAllCategories() {
-		log.info("GET /furniture/categories - Obteniendo todas las categorías");
+		log.info("🔓 GET /furniture/categories - ✅ PASÓ @PreAuthorize");
 		try {
 			List<Category> categories = categoryRepository.findAll();
+			log.info("✅ Categorías encontradas: {}", categories.size());
 			return ResponseEntity.ok(ApiResponse.success(categories, "Categorías obtenidas exitosamente"));
 		} catch (Exception e) {
-			log.error("Error obteniendo categorías: {}", e.getMessage());
+			log.error("❌ Error obteniendo categorías: {}", e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(ApiResponse.error("Error obteniendo categorías", 500));
 		}

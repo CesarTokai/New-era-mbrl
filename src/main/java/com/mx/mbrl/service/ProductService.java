@@ -143,7 +143,14 @@ public class ProductService {
 	@Transactional(readOnly = true)
 	public List<Product> findAll() {
 		log.debug("Obteniendo todos los productos activos");
-		return productRepository.findByIsActiveTrue();
+		try {
+			List<Product> products = productRepository.findByIsActiveTrue();
+			log.info("✅ {} productos encontrados", products.size());
+			return products;
+		} catch (Exception e) {
+			log.error("❌ ERROR EN findAll(): {}", e.getMessage(), e);
+			throw e; // Re-lanzar para que se vea en los logs
+		}
 	}
 
 	@Transactional(readOnly = true)

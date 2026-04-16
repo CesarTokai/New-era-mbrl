@@ -29,17 +29,17 @@ public class FurnitureController {
 	private final ProductService productService;
 
 	@GetMapping
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<List<ProductResponseDTO>>> getAllFurniture() {
-		log.info("GET /furniture - Obteniendo todos los productos");
+		log.info("🔓 GET /furniture - ✅ PASÓ AUTORIZACIÓN (GET sin @PreAuthorize)");
 		try {
 			List<ProductResponseDTO> dtos = productService.findAll()
 					.stream().map(this::toDTO).collect(Collectors.toList());
+			log.info("✅ Productos encontrados: {}", dtos.size());
 			return ResponseEntity.ok(ApiResponse.success(dtos, "Productos obtenidos exitosamente"));
 		} catch (Exception e) {
-			log.error("Error obteniendo productos: {}", e.getMessage());
+			log.error("❌ Error obteniendo productos: {}", e.getMessage(), e);
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(ApiResponse.error("Error obteniendo productos", 500));
+					.body(ApiResponse.error("Error obteniendo productos: " + e.getMessage(), 500));
 		}
 	}
 
