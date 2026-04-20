@@ -29,34 +29,41 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		try {
 			String header = request.getHeader("Authorization");
 			if (header != null && header.startsWith("Bearer ")) {
-				String jwt = header.substring(7);
-				log.info("[JWT] Token recibido para: {} {}", request.getMethod(), uri);
-				
+				String jwt = header.substring(7).trim();
+
+				// Validar que el token no esté vacío
+				if (jwt.isEmpty()) {
+					log.warn("[JWT] Token vacío en: {} {}", request.getMethod(), uri);
+					chain.doFilter(request, response);
+					return;
+				}
+
 				if (jwtUtil.validateToken(jwt)) {
 					String email = jwtUtil.extractUsername(jwt);
-					log.info("[JWT] Email extraído: {}", email);
-					
-					if (email != null) {
-						UserDetails user = userDetailsService.loadUserByUsername(email);
-						log.info("[JWT] Usuario cargado: {} con autoridades: {}", email, user.getAuthorities());
-						
-						UsernamePasswordAuthenticationToken auth =
-								new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-						auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-						SecurityContextHolder.getContext().setAuthentication(auth);
-						
-						log.info("[JWT] ✅ AUTENTICADO: {} en {} {}", email, request.getMethod(), uri);
+
+					if (email != null && !email.isEmpty()) {
+						try {
+							UserDetails user = userDetailsService.loadUserByUsername(email);
+							UsernamePasswordAuthenticationToken auth =
+									new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+							auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+							SecurityContextHolder.getContext().setAuthentication(auth);
+							log.debug("[JWT] Autenticado: {} en {} {}", email, request.getMethod(), uri);
+						} catch (Exception e) {
+							log.warn("[JWT] No se pudo cargar usuario {}: {}", email, e.getMessage());
+							SecurityContextHolder.clearContext();
+						}
 					} else {
-						log.warn("[JWT] ❌ Email nulo extraído del token para: {} {}", request.getMethod(), uri);
+						log.warn("[JWT] Email nulo en token para: {} {}", request.getMethod(), uri);
+						SecurityContextHolder.clearContext();
 					}
 				} else {
-					log.warn("[JWT] ❌ Token INVÁLIDO para: {} {}", request.getMethod(), uri);
+					log.debug("[JWT] Token inválido o expirado en: {} {}", request.getMethod(), uri);
+					SecurityContextHolder.clearContext();
 				}
-			} else {
-				log.debug("[JWT] ⚠️ SIN TOKEN en: {} {}", request.getMethod(), uri);
 			}
 		} catch (Exception e) {
-			log.error("[JWT] ❌ ERROR procesando token para {} {}: {}", request.getMethod(), uri, e.getMessage());
+			log.error("[JWT] Error procesando token en {} {}: {}", request.getMethod(), uri, e.getMessage());
 			SecurityContextHolder.clearContext();
 		}
 

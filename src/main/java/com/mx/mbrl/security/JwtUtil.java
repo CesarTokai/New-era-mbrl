@@ -42,12 +42,19 @@ public class JwtUtil {
 	/** Valida el token: firma, expiración y formato. */
 	public boolean validateToken(String token) {
 		try {
+			if (token == null || token.trim().isEmpty()) {
+				return false;
+			}
 			Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
 			return true;
 		} catch (ExpiredJwtException e) {
-			log.warn("[JWT] Token expirado: {}", e.getMessage());
+			log.debug("[JWT] Token expirado");
+		} catch (MalformedJwtException e) {
+			log.debug("[JWT] Token malformado");
+		} catch (UnsupportedJwtException e) {
+			log.debug("[JWT] Token no soportado");
 		} catch (JwtException | IllegalArgumentException e) {
-			log.warn("[JWT] Token inválido: {}", e.getMessage());
+			log.debug("[JWT] Token inválido: {}", e.getClass().getSimpleName());
 		}
 		return false;
 	}

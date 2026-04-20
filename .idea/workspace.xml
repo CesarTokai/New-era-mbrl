@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="04614044-9f04-4f3b-a0cc-042bdd72219b" name="Changes" comment="Cambios grandes">
-      <change afterPath="$PROJECT_DIR$/src/frontend-axios-fix.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/CategoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/FurnitureController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/FurnitureController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtAuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtAuthFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtAuthFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtAuthFilter.class" afterDir="false" />
-    </list>
+    <list default="true" id="04614044-9f04-4f3b-a0cc-042bdd72219b" name="Changes" comment="Cambios grandes" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -179,7 +171,7 @@
       <workItem from="1776207607662" duration="397000" />
       <workItem from="1776261818998" duration="594000" />
       <workItem from="1776283350379" duration="3440000" />
-      <workItem from="1776358983735" duration="2574000" />
+      <workItem from="1776358983735" duration="2631000" />
     </task>
     <task id="LOCAL-00001" summary="Cambios grandes">
       <option name="closed" value="true" />
