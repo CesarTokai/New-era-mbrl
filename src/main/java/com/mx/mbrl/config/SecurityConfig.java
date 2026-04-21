@@ -60,26 +60,29 @@ public class SecurityConfig {
 				.authenticationEntryPoint((req, res, e) -> {
 					res.setContentType("application/json;charset=UTF-8");
 					res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-					res.getWriter().write("{\"success\":false,\"message\":\"Token inválido o no enviado. Inicia sesión en POST /api/auth/login\",\"status\":401}");
+					res.getWriter().write("{\"success\":false,\"message\":\"Inicia sesión para continuar\",\"status\":401}");
 				})
 				.accessDeniedHandler((req, res, e) -> {
 					res.setContentType("application/json;charset=UTF-8");
 					res.setStatus(HttpServletResponse.SC_FORBIDDEN);
-					res.getWriter().write("{\"success\":false,\"message\":\"No tienes permisos para esta acción.\",\"status\":403}");
+					res.getWriter().write("{\"success\":false,\"message\":\"No tienes permisos para esta acción\",\"status\":403}");
 				})
 			)
 			.authorizeHttpRequests(authz -> authz
-				// ── Públicos (sin JWT) ──────────────────────────────────
-				.requestMatchers(HttpMethod.POST,    "/api/auth/register").permitAll()
-				.requestMatchers(HttpMethod.POST,    "/api/auth/login").permitAll()
-				.requestMatchers(HttpMethod.POST,    "/api/auth/forgot-password").permitAll()
-				.requestMatchers(HttpMethod.GET,     "/api/auth/validate-reset-token").permitAll()
-				.requestMatchers(HttpMethod.POST,    "/api/auth/reset-password").permitAll()
+				// Público sin JWT
 				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-				.requestMatchers(HttpMethod.GET,     "/uploads/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/auth/forgot-password").permitAll()
+				.requestMatchers(HttpMethod.GET,  "/api/auth/validate-reset-token").permitAll()
+				.requestMatchers(HttpMethod.POST, "/api/auth/reset-password").permitAll()
+				// Todos los GETs son públicos
+				.requestMatchers(HttpMethod.GET, "/**").permitAll()
+				// Actuator
+				.requestMatchers("/actuator/**").permitAll()
+				// Swagger
 				.requestMatchers("/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-				.requestMatchers("/actuator/health").permitAll()
-				// ── Protegidos (requieren Authorization: Bearer <token>) ─
+				// Todo lo demás requiere autenticación (POST, PUT, DELETE)
 				.anyRequest().authenticated()
 			)
 			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -90,16 +93,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration cfg = new CorsConfiguration();
-		cfg.setAllowedOrigins(Arrays.asList(
-			"http://localhost:3000",
-			"http://localhost:4200",
-			"http://localhost:5173",
-			"http://localhost:5174",
-			"http://127.0.0.1:3000",
-			"http://127.0.0.1:4200",
-			"http://127.0.0.1:5173",
-			"http://127.0.0.1:5174"
-		));
+		cfg.setAllowedOriginPatterns(List.of("*"));
 		cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		cfg.setAllowedHeaders(List.of("*"));
 		cfg.setAllowCredentials(true);

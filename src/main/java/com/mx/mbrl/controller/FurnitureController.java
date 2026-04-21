@@ -61,7 +61,7 @@ public class FurnitureController {
 	}
 
 	@PostMapping
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ApiResponse<ProductResponseDTO>> createFurniture(
 			@Valid @RequestBody ProductRequestDTO dto) {
 		log.info("╔════════════════════════════════════════════════════════════");
@@ -103,7 +103,7 @@ public class FurnitureController {
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ApiResponse<ProductResponseDTO>> updateFurniture(
 			@PathVariable Long id, @Valid @RequestBody ProductRequestDTO dto) {
 		log.info("PUT /furniture/{} - Actualizando producto", id);
@@ -121,7 +121,7 @@ public class FurnitureController {
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<ApiResponse<Void>> deleteFurniture(@PathVariable Long id) {
 		log.info("DELETE /furniture/{} - Eliminando producto", id);
 		try {

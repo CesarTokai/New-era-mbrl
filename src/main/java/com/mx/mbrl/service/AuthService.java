@@ -109,14 +109,14 @@ public class AuthService {
 			throw new IllegalArgumentException("Las contraseñas no coinciden");
 		}
 
-		if (changePasswordRequest.getOldPassword().equals(changePasswordRequest.getNewPassword())) {
+		if (changePasswordRequest.getCurrentPassword().equals(changePasswordRequest.getNewPassword())) {
 			throw new IllegalArgumentException("La nueva contraseña no puede ser igual a la actual");
 		}
 
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
-		if (!passwordEncoder.matches(changePasswordRequest.getOldPassword(), user.getPassword())) {
+		if (!passwordEncoder.matches(changePasswordRequest.getCurrentPassword(), user.getPassword())) {
 			log.warn("Intento fallido de cambio de contraseña para usuario ID: {}", userId);
 			throw new IllegalArgumentException("La contraseña actual es incorrecta");
 		}

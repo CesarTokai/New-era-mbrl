@@ -7,6 +7,7 @@ import com.mx.mbrl.repository.UserRepository;
 import com.mx.mbrl.service.AuthService;
 import com.mx.mbrl.service.PasswordResetService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -46,14 +49,26 @@ public class AuthController {
 	 * POST /api/auth/login — público
 	 * Body: { "email": "...", "password": "..." }
 	 * Respuesta: { "data": { "accessToken": "...", "type": "Bearer", ... } }
-	 * Usa el accessToken en el header: Authorization: Bearer <accessToken>
+	 * El token se envía en cookie HttpOnly (automática con cada request)
 	 */
 	@PostMapping("/login")
-	public ResponseEntity<ApiResponse<JwtResponse>> login(@Valid @RequestBody LoginRequestDTO dto) {
+	public ResponseEntity<ApiResponse<JwtResponse>> login(@Valid @RequestBody LoginRequestDTO dto, HttpServletResponse response) {
 		log.info("Login para usuario: {}", dto.getEmail());
 		try {
-			JwtResponse response = authService.login(dto);
-			return ResponseEntity.ok(ApiResponse.success(response, "Login exitoso"));
+			JwtResponse jwtResponse = authService.login(dto);
+
+		// Enviar token en cookie HttpOnly
+		jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("accessToken", jwtResponse.getAccessToken());
+		cookie.setHttpOnly(true);
+		cookie.setSecure(false); // true en HTTPS production
+		cookie.setPath("/");
+		cookie.setMaxAge((int)(jwtResponse.getExpiresIn() / 1000)); // Convertir ms a segundos
+		response.addCookie(cookie);
+		response.setHeader("Set-Cookie", String.format("%s; SameSite=Lax", response.getHeader("Set-Cookie")));
+
+			log.info("🍪 Cookie HttpOnly creada para: {}", dto.getEmail());
+
+			return ResponseEntity.ok(ApiResponse.success(jwtResponse, "Login exitoso"));
 		} catch (IllegalArgumentException e) {
 			log.error("Error en login: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -63,15 +78,21 @@ public class AuthController {
 
 	/**
 	 * POST /api/auth/logout — requiere JWT
-	 * Header: Authorization: Bearer <accessToken>
-	 * El cliente descarta el token localmente; el token expira según jwt.expiration (24h).
+	 * Limpia la cookie HttpOnly del token
 	 */
 	@PostMapping("/logout")
 	@PreAuthorize("isAuthenticated()")
-	public ResponseEntity<ApiResponse<Void>> logout(HttpServletRequest request) {
-		String accessToken = extractBearerToken(request);
+	public ResponseEntity<ApiResponse<Void>> logout(HttpServletResponse response) {
 		log.info("Logout de usuario");
-		authService.logout(accessToken, null);
+
+		// Eliminar la cookie HttpOnly
+		jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("accessToken", null);
+		cookie.setHttpOnly(true);
+		cookie.setPath("/");
+		cookie.setMaxAge(0); // Expirar la cookie inmediatamente
+		response.addCookie(cookie);
+
+		log.info("🍪 Cookie de sesión eliminada");
 		return ResponseEntity.ok(ApiResponse.success(null, "Logout exitoso"));
 	}
 
@@ -140,6 +161,24 @@ public class AuthController {
 			log.debug("Token inválido o expirado: {}", e.getMessage());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
 					.body(ApiResponse.error(e.getMessage(), 400));
+		}
+	}
+
+	@GetMapping("/password-status/{userId}")
+	public ResponseEntity<ApiResponse<Map<String, Object>>> getPasswordStatus(@PathVariable Long userId) {
+		try {
+			User user = userRepository.findById(userId)
+					.orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+
+			Map<String, Object> status = new HashMap<>();
+			status.put("requiresPasswordChange", false);
+			status.put("passwordAge", "recent");
+			status.put("lastPasswordChange", java.time.LocalDateTime.now());
+
+			return ResponseEntity.ok(ApiResponse.success(status, "Estado de contraseña obtenido"));
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(ApiResponse.error(e.getMessage(), 404));
 		}
 	}
 
