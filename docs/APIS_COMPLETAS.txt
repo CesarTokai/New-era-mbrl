@@ -1,0 +1,307 @@
+╔══════════════════════════════════════════════════════════════════════════════════════╗
+║                         TODAS LAS APIS DEL PROYECTO MBRL                             ║
+║                              Base URL: http://localhost:8080                         ║
+╚══════════════════════════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+1. AUTENTICACIÓN Y AUTORIZACIÓN (/api/auth)
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+✓ POST /api/auth/register [PÚBLICO]
+  - Descripción: Registrar nuevo cliente
+  - Body: { name, email, password, phone }
+  - Response: 201 Created - Customer object
+  - Validación: @Valid @RequestBody CustomerRequestDTO
+
+✓ POST /api/auth/login [PÚBLICO]
+  - Descripción: Autenticar usuario y obtener JWT
+  - Body: { email, password }
+  - Response: 200 OK - { accessToken, refreshToken, tokenType, expiresIn }
+  - Envía token también en cookie HttpOnly
+
+✓ POST /api/auth/logout [@PreAuthorize("isAuthenticated()")]
+  - Descripción: Cerrar sesión (invalida tokens)
+  - Limpia cookie HttpOnly
+  - Response: 200 OK
+
+✓ POST /api/auth/change-password [@PreAuthorize("isAuthenticated()")]
+  - Descripción: Cambiar contraseña (usuario autenticado)
+  - Body: { oldPassword, newPassword, confirmPassword }
+  - Response: 200 OK
+
+✓ POST /api/auth/forgot-password [PÚBLICO]
+  - Descripción: Solicitar reset de contraseña
+  - Query Params: ?email=...
+  - Response: 200 OK (no revela si email existe)
+
+✓ POST /api/auth/reset-password [PÚBLICO]
+  - Descripción: Resetear contraseña con token válido
+  - Body: { token, newPassword, confirmPassword }
+  - Response: 200 OK
+
+✓ GET /api/auth/validate-reset-token [PÚBLICO]
+  - Descripción: Validar token de reset
+  - Query Params: ?token=...
+  - Response: 200 OK - { data: boolean }
+
+✓ GET /api/auth/password-status/{userId} [@PreAuthorize("isAuthenticated()")]
+  - Descripción: Obtener estado de contraseña del usuario
+  - Path Params: userId
+  - Response: 200 OK - { requiresPasswordChange, passwordAge, lastPasswordChange }
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+2. MUEBLES / PRODUCTOS - Endpoint Principal (/furniture) [SIN /api]
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+✓ GET /furniture [PÚBLICO - SIN @PreAuthorize]
+  - Descripción: Obtener todos los productos activos
+  - Response: 200 OK - List<ProductResponseDTO>
+  - NOTA: Este endpoint NO tiene @PreAuthorize, es público
+
+✓ GET /furniture/{id} [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Obtener producto por ID
+  - Path Params: id
+  - Response: 200 OK - ProductResponseDTO
+
+✓ POST /furniture [@PreAuthorize("hasRole('ADMIN')")]
+  - Descripción: Crear nuevo producto (SOLO ADMIN)
+  - Body: ProductRequestDTO
+    {
+      "name": "string (required, max 255)",
+      "description": "string (max 1000)",
+      "price": "BigDecimal (required, > 0)",
+      "costPrice": "BigDecimal (required, > 0)",
+      "stock": "Integer (>= 0, default 0)",
+      "minStock": "Integer (>= 0, default 5)",
+      "imageUrl": "string (max 500)",
+      "brandId": "Long (optional)",
+      "categoryId": "Long (optional)"
+    }
+  - Response: 201 Created - ProductResponseDTO
+
+✓ PUT /furniture/{id} [@PreAuthorize("hasRole('ADMIN')")]
+  - Descripción: Actualizar producto (SOLO ADMIN)
+  - Path Params: id
+  - Body: ProductRequestDTO
+  - Response: 200 OK - ProductResponseDTO
+
+✓ DELETE /furniture/{id} [@PreAuthorize("hasRole('ADMIN')")]
+  - Descripción: Eliminar (soft delete) producto (SOLO ADMIN)
+  - Path Params: id
+  - Response: 200 OK
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+3. MUEBLES / PRODUCTOS - Endpoint Alternativo (/api/products)
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+✓ GET /api/products [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Obtener todos los productos (requiere autenticación)
+  - Response: 200 OK - List<ProductResponseDTO>
+
+✓ GET /api/products/{id} [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Obtener producto por ID
+  - Path Params: id
+  - Response: 200 OK - ProductResponseDTO
+
+✓ GET /api/products/low-stock [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Obtener productos con stock bajo (< 5)
+  - Response: 200 OK - List<ProductResponseDTO>
+
+✓ GET /api/products/{id}/related [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Obtener productos relacionados (misma categoría o palabras clave similares)
+  - Path Params: id
+  - Query Params: ?limit=5 (default)
+  - Response: 200 OK - List<ProductResponseDTO>
+
+✓ POST /api/products [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Crear producto (requiere autenticación)
+  - Body: ProductRequestDTO
+  - Response: 201 Created - ProductResponseDTO
+
+✓ PUT /api/products/{id} [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Actualizar producto
+  - Path Params: id
+  - Body: ProductRequestDTO
+  - Response: 200 OK - ProductResponseDTO
+
+✓ DELETE /api/products/{id} [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Eliminar producto
+  - Path Params: id
+  - Response: 200 OK
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+4. CATEGORÍAS (/furniture/categories) [SIN /api]
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+✓ GET /furniture/categories [PÚBLICO - SIN @PreAuthorize]
+  - Descripción: Obtener todas las categorías
+  - Response: 200 OK - List<Category>
+
+✓ GET /furniture/categories/{id} [PÚBLICO]
+  - Descripción: Obtener categoría por ID
+  - Path Params: id
+  - Response: 200 OK - Category
+
+✓ POST /furniture/categories [@PreAuthorize("hasRole('ADMIN')")]
+  - Descripción: Crear categoría (SOLO ADMIN)
+  - Body: CategoryRequestDTO
+    {
+      "name": "string (required)",
+      "description": "string (optional)",
+      "parentCategoryId": "Long (optional, para categorías jerárquicas)"
+    }
+  - Response: 201 Created - Category
+
+✓ PUT /furniture/categories/{id} [@PreAuthorize("hasRole('ADMIN')")]
+  - Descripción: Actualizar categoría (SOLO ADMIN)
+  - Path Params: id
+  - Body: CategoryRequestDTO
+  - Response: 200 OK - Category
+
+✓ DELETE /furniture/categories/{id} [@PreAuthorize("hasRole('ADMIN')")]
+  - Descripción: Eliminar categoría (SOLO ADMIN)
+  - Path Params: id
+  - Response: 200 OK
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+5. MARCAS (/furniture/brands) [SIN /api]
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+✓ GET /furniture/brands [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Obtener todas las marcas
+  - Response: 200 OK - List<Brand>
+
+✓ GET /furniture/brands/{id} [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Obtener marca por ID
+  - Path Params: id
+  - Response: 200 OK - Brand
+
+✓ POST /furniture/brands [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Crear marca
+  - Body: BrandRequestDTO { name }
+  - Response: 201 Created - Brand
+
+✓ PUT /furniture/brands/{id} [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Actualizar marca
+  - Path Params: id
+  - Body: BrandRequestDTO { name }
+  - Response: 200 OK - Brand
+
+✓ DELETE /furniture/brands/{id} [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Eliminar marca
+  - Path Params: id
+  - Response: 200 OK
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+6. IMÁGENES (/api/images)
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+✓ POST /api/images/upload [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Subir imagen
+  - Form Data: file (multipart)
+  - Tipos permitidos: JPEG, PNG, GIF, WEBP
+  - Tamaño máximo: 5MB
+  - Response: 201 Created - { data: "http://localhost:8080/uploads/images/uuid.png" }
+
+✓ DELETE /api/images/{fileName} [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Eliminar imagen subida
+  - Path Params: fileName
+  - Response: 200 OK
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+7. ÓRDENES (/api/orders)
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+✓ POST /api/orders [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Crear nueva orden
+  - Body: OrderRequestDTO { customerId, items: [{ productId, quantity }], ... }
+  - Response: 201 Created - Order
+
+✓ GET /api/orders/{id} [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Obtener orden por ID
+  - Path Params: id
+  - Response: 200 OK - Order
+
+✓ GET /api/orders [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+  - Descripción: Obtener órdenes (filtrable por customerId si es ADMIN)
+  - Query Params: ?customerId=... (opcional, solo ADMIN)
+  - Response: 200 OK - List<Order>
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+8. CLIENTES / CUSTOMERS (/api/customers o similar)
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+[Requiere exploración adicional del CustomerController]
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+9. INVENTARIO (/api/inventory o similar)
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+[Requiere exploración adicional del InventoryController]
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+10. REPORTES (/api/reports o similar)
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+[Requiere exploración adicional del ReportController]
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+IMPORTANTE - PROBLEMA IDENTIFICADO:
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+❌ CONFLICTO DE RUTAS PARA CREAR MUEBLES:
+
+Hay 2 endpoints diferentes para crear productos:
+
+1. POST /furniture [@PreAuthorize("hasRole('ADMIN')")]
+   - Sin /api
+   - Requiere rol ADMIN exacto
+
+2. POST /api/products [@PreAuthorize("hasAnyRole('USER', 'ADMIN')")]
+   - Con /api
+   - Acepta USER o ADMIN
+
+EL FRONTEND ESTÁ USANDO: POST /furniture/
+- Pero el servidor retorna 404 (no encontrado) cuando intenta GET /furniture/
+- Esto sugiere que FurnitureController NO está siendo escanteado por Spring
+
+SOLUCIÓN PROBABLE:
+- El frontend debería usar POST /api/products en lugar de POST /furniture/
+- O el FurnitureController no está en el package correcto para el component scan
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+AUTENTICACIÓN Y AUTORIZACIÓN
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+Mecanismos:
+1. JWT Token (Bearer en header Authorization)
+2. Cookie HttpOnly (accToken)
+3. Refresh Token (para renovar el JWT)
+
+Header requerido para endpoints protegidos:
+- Authorization: Bearer eyJhbGciOiJIUzUxMiJ9...
+
+O automáticamente desde cookie HttpOnly
+
+Roles disponibles:
+- ROLE_ADMIN - Acceso total
+- ROLE_USER - Acceso limitado
+- ROLE_CUSTOMER - Usuario cliente (no en endpoints actuales)
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+RESUMEN RÁPIDO - CREAR MUEBLE:
+
+Opción 1 (SIN /api):
+  POST /furniture
+  @PreAuthorize("hasRole('ADMIN')")
+
+Opción 2 (CON /api):
+  POST /api/products
+  @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+
+RECOMENDACIÓN: Usa la opción 2 (/api/products) porque:
+- Tiene rutas más consistentes con el resto del proyecto
+- Acepta múltiples roles
+- El frontend actualmente falla con opción 1 (404)
+

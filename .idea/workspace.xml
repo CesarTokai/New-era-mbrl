@@ -5,17 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="04614044-9f04-4f3b-a0cc-042bdd72219b" name="Changes" comment="Cambios grandes">
+      <change afterPath="$PROJECT_DIR$/AUDITORIA_ARQUITECTONICA.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/ANALISIS_DUPLICACION_APIS.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/APIS_COMPLETAS.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/FRONTEND_CAMBIOS.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/CategoryController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/FurnitureController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/FurnitureController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtAuthFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/security/JwtAuthFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/AuthController.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/controller/AuthController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtAuthFilter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtAuthFilter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtUtil.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/security/JwtUtil.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JWT_FIXES_BACKEND.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/JWT_FIXES_BACKEND.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JWT_SECURITY_CONFIG.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/JWT_SECURITY_CONFIG.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/FurnitureController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/ProductService.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/mx/mbrl/service/ProductService.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -187,6 +186,8 @@
       <workItem from="1776715311916" duration="1047000" />
       <workItem from="1776716391598" duration="3197000" />
       <workItem from="1776720285900" duration="1134000" />
+      <workItem from="1776779304752" duration="486000" />
+      <workItem from="1776785478506" duration="2005000" />
     </task>
     <task id="LOCAL-00001" summary="Cambios grandes">
       <option name="closed" value="true" />

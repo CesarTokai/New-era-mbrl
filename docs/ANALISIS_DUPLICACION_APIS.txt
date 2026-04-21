@@ -1,0 +1,162 @@
+═══════════════════════════════════════════════════════════════════════════════════════════
+ANÁLISIS: ¿POR QUÉ TIENES 2 APIs IDÉNTICAS?
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+📊 COMPARACIÓN LADO A LADO:
+
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│ CARACTERÍSTICA         │ /furniture              │ /api/products                        │
+├─────────────────────────────────────────────────────────────────────────────────────────┤
+│ Ubicación del código   │ FurnitureController.java│ ProductController.java               │
+│ Ruta base              │ /furniture              │ /api/products                        │
+│ GET (listar)           │ GET /furniture          │ GET /api/products                    │
+│ GET por ID             │ GET /furniture/{id}     │ GET /api/products/{id}               │
+│ POST (crear)           │ POST /furniture         │ POST /api/products                   │
+│ PUT (actualizar)       │ PUT /furniture/{id}     │ PUT /api/products/{id}               │
+│ DELETE (eliminar)      │ DELETE /furniture/{id}  │ DELETE /api/products/{id}            │
+│ Rol requerido POST     │ hasRole('ADMIN')        │ hasAnyRole('USER','ADMIN')           │
+│ Rol requerido GET      │ SIN @PreAuthorize       │ hasAnyRole('USER','ADMIN')           │
+│ Low Stock endpoint     │ NO                      │ SÍ (/api/products/low-stock)         │
+│ Related Products       │ NO                      │ SÍ (/api/products/{id}/related)      │
+│ Servicio usado         │ ProductService          │ ProductService (el MISMO)            │
+│ DTO usado              │ ProductRequestDTO       │ ProductRequestDTO (el MISMO)         │
+│ Lógica de negocio      │ 100% IDÉNTICA           │ 100% IDÉNTICA                        │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+ENCONTRANDO LAS DIFERENCIAS REALES:
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+✅ DIFERENCIAS SIGNIFICATIVAS:
+
+1. PERMISOS DE ACCESO
+   ❌ /furniture:
+      - GET / → SIN @PreAuthorize (PÚBLICO)
+      - POST  → @PreAuthorize("hasRole('ADMIN')") - SOLO ADMIN exacto
+
+   ✅ /api/products:
+      - GET  → @PreAuthorize("hasAnyRole('USER', 'ADMIN')") - Más flexible
+      - POST → @PreAuthorize("hasAnyRole('USER', 'ADMIN')") - Acepta USER o ADMIN
+
+2. ENDPOINTS ADICIONALES
+   ✅ /api/products TIENE:
+      - GET /api/products/low-stock → Productos con stock bajo
+      - GET /api/products/{id}/related → Productos relacionados
+
+   ❌ /furniture NO TIENE estos endpoints
+
+3. PROPÓSITO DOCUMENTADO
+   FurnitureController.java línea 19-21:
+   /**
+    * Controlador que expone los productos bajo la ruta /furniture/
+    * para compatibilidad con el frontend existente.
+    */
+
+   → Fue creado POR COMPATIBILIDAD HISTÓRICA CON EL FRONTEND
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+POR QUÉ EXISTEN AMBAS:
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+ESCENARIO MÁS PROBABLE:
+
+1. FASE INICIAL:
+   - Se creó FurnitureController (/furniture) para el frontend
+   - El frontend fue diseñado esperando esta ruta
+   - Se estructura como un "alias" del concepto "muebles"
+
+2. FASE POSTERIOR (REFACTORIZACIÓN):
+   - Se creó ProductController (/api/products) como API "profesional"
+   - Sigue convención RESTful (URLs comienzan con /api/)
+   - Incluye endpoints más avanzados (low-stock, related)
+   - Tiene permisos más granulares (acepta USER además de ADMIN)
+
+3. RESULTADO:
+   - AMBAS existen porque:
+     a) El frontend sigue usando /furniture (legado)
+     b) Nadie eliminó FurnitureController para evitar romper el frontend
+     c) ProductController es la "versión nueva" más completa
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+¿POR QUÉ FALLA /furniture CON 404?
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+❌ PROBLEMA REAL IDENTIFICADO:
+
+El frontend intenta:
+- GET http://localhost:8080/furniture/ → 404 Not Found
+
+Pero en el código:
+- FurnitureController.java EXISTE
+- @RequestMapping("/furniture") ESTÁ DEFINIDO
+- @GetMapping NO tiene @PreAuthorize (debería ser público)
+
+¿POR QUÉ 404 SI EL CONTROLLER EXISTE?
+
+RESPUESTA: El servidor podría estar:
+1. Usando una versión compilada ANTIGUA sin FurnitureController
+2. El controller NO está siendo escanteado por Spring (ver target/classes)
+3. FurnitureController está comentado o deshabilitado
+4. El jar/war deployado no incluye cambios recientes
+
+COMPROBACIÓN:
+- En target/classes/com/mx/mbrl/controller/ ¿existe FurnitureController.class?
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+RECOMENDACIÓN DE ARQUITECTURA:
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+OPCIÓN 1: Usar solo /api/products (RECOMENDADO)
+   Ventajas:
+   ✅ Una sola fuente de verdad
+   ✅ Convención RESTful consistente
+   ✅ Endpoints más avanzados disponibles
+   ✅ Permisos más granulares
+   ✅ Mantenimiento simplificado
+
+   Desventajas:
+   ❌ Requiere cambiar frontend (de /furniture a /api/products)
+
+OPCIÓN 2: Eliminar duplicación
+   - Mantener SOLO FurnitureController
+   - Agregarle los endpoints de low-stock y related
+   - Actualizar permisos
+   - Mantener compatibilidad con frontend actual
+
+   Desventajas:
+   ❌ Inconsistencia con convención /api/
+   ❌ FurnitureController maneja concepto "Product" (confuso)
+
+OPCIÓN 3: Usar /furniture como proxy
+   - FurnitureController delega TODO a ProductController
+   - Evita duplicación de código
+   - Mantiene ambas rutas funcionales
+
+   Desventajas:
+   ⚠️ Overhead de delegación
+   ⚠️ Complejidad innecesaria
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+RESUMEN EJECUTIVO:
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+PREGUNTA: ¿Por qué 2 APIs idénticas?
+RESPUESTA: NO son completamente idénticas:
+           - /furniture es LEGADO (por compatibilidad frontend)
+           - /api/products es NUEVA (más completa y profesional)
+
+CAUSA DEL ERROR 404:
+           - El frontend usa /furniture pero está retornando 404
+           - Probablemente porque el servidor compilado NO incluye FurnitureController
+           - O está deshabilitado/comentado
+
+SOLUCIÓN MÁS SIMPLE:
+           ✅ Usar /api/products (cambiar frontend de /furniture → /api/products)
+           ✅ Eliminar FurnitureController para evitar confusión
+           ✅ Centralizar toda la lógica en ProductController
+
+ESTADO ACTUAL:
+           ❌ Duplicación de código (CÓDIGO MUERTO)
+           ❌ Confusión de rutas
+           ⚠️ FurnitureController no funciona (404)
+

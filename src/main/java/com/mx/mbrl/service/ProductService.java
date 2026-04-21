@@ -48,7 +48,6 @@ public class ProductService {
 					.orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada con ID: " + productRequestDTO.getCategoryId()));
 		}
 
-		// Crear producto
 		Product product = new Product();
 		product.setName(productRequestDTO.getName());
 		product.setDescription(productRequestDTO.getDescription());
@@ -64,8 +63,7 @@ public class ProductService {
 		product.setUpdatedAt(LocalDateTime.now());
 
 		Product savedProduct = productRepository.save(product);
-		log.info("Producto creado con ID: {}", savedProduct.getId());
-
+		log.info("✅ Producto creado con ID: {}", savedProduct.getId());
 		return savedProduct;
 	}
 

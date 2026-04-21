@@ -1,0 +1,153 @@
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+AUDITORÍA ARQUITECTÓNICA - BÚSQUEDA DE PROBLEMAS SIMILARES
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+## RESUMEN
+
+✅ **NO HAY problemas similares al de FurnitureController**
+
+El problema de FurnitureController fue ÚNICO porque era:
+1. Una copia exacta de ProductController
+2. Código muerto (404 siempre)
+3. No servía ningún propósito real
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+ANÁLISIS INDIVIDUAL DE TODOS LOS CONTROLLERS
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+## 1. AuthController (/api/auth)
+   Estado: ✅ SIN PROBLEMAS
+   - Sin duplicación
+   - Responsabilidad clara: Autenticación
+   - Endpoints bien definidos
+   - No hay alternativas
+
+## 2. ProductController (/api/products)
+   Estado: ✅ SIN PROBLEMAS (ahora es el único)
+   - FurnitureController eliminado ✓
+   - Endpoints CRUD completos
+   - Endpoints extras útiles:
+     • /low-stock
+     • /{id}/related
+   - Responsabilidad clara
+
+## 3. BrandController (/furniture/brands)
+   Estado: ✅ SIN PROBLEMAS
+   - Responsabilidad: Gestión de Marcas
+   - Endpoints CRUD
+   - Sin duplicación
+   - Ruta clara (/furniture/brands)
+
+## 4. CategoryController (/furniture/categories)
+   Estado: ✅ SIN PROBLEMAS
+   - Responsabilidad: Gestión de Categorías
+   - Endpoints CRUD
+   - Sin duplicación
+   - Ruta clara (/furniture/categories)
+
+## 5. CustomerController (/api/customers)
+   Estado: ✅ SIN PROBLEMAS
+   - Responsabilidad: Gestión de Clientes
+   - Endpoints CRUD + stats
+   - Sin duplicación
+   - Diferente de AuthController (login vs gestión)
+
+## 6. OrderController (/api/orders)
+   Estado: ✅ SIN PROBLEMAS
+   - Responsabilidad: Gestión de Órdenes
+   - Endpoints GET/POST
+   - Sin duplicación
+
+## 7. ImageController (/api/images)
+   Estado: ✅ SIN PROBLEMAS
+   - Responsabilidad: Subida/eliminación de imágenes
+   - Sin duplicación
+   - Funcionalidad específica
+
+## 8. InventoryController (/api/inventory)
+   Estado: ✅ SIN PROBLEMAS
+   - Responsabilidad: Movimientos de inventario
+   - Endpoints especializados:
+     • /movements/{productId}
+     • /adjust
+     • /add-stock
+     • /remove-stock
+     • /available-stock/{productId}
+   - Sin duplicación
+
+## 9. ReportController (/api/reports)
+   Estado: ✅ SIN PROBLEMAS
+   - Responsabilidad: Reportes y métricas
+   - Endpoints especializados:
+     • /sales
+     • /top-products
+     • /low-stock
+     • /profit
+     • /revenue
+     • /dashboard
+   - Sin duplicación
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+HALLAZGOS DE LA AUDITORÍA
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+### ✅ PUNTOS POSITIVOS:
+
+1. **Sin duplicación crítica**
+   - Cada controller tiene responsabilidad única y clara
+   - No hay 2 controllers haciendo lo mismo
+
+2. **Convención de rutas consistente**
+   - `/api/*` para API moderna
+   - `/furniture/*` para conceptos de negocio específicos
+   - Está bien definido
+
+3. **Separación de responsabilidades**
+   - AuthController ≠ CustomerController (no mezclan conceptos)
+   - ReportController separado de ProductController
+   - InventoryController independiente
+
+4. **Permisos bien asignados**
+   - @PreAuthorize usa hasAnyRole (flexible)
+   - Algunos endpoints públicos donde es necesario
+   - Consistencia en restricciones
+
+### ⚠️ PUNTOS A OBSERVAR (no son críticos):
+
+1. **InventoryController y ReportController usan @PreAuthorize a nivel de clase**
+   ```java
+   @RestController
+   @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+   public class InventoryController { ... }
+   ```
+   Esto significa que TODOS los endpoints requieren autenticación.
+   - ✅ Correcto: Estos recursos son sensibles
+
+2. **Rutas inconsistentes en formato**
+   - `/api/products` (sin "s" al final en ruta base)
+   - `/api/customers` (con "s")
+   - `/api/inventory` (singular)
+   - `/api/reports` (plural)
+   - Esto es MENOR, pero se podría estandarizar
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+CONCLUSIÓN FINAL
+═══════════════════════════════════════════════════════════════════════════════════════════
+
+✅ **NO HAY problemas similares a FurnitureController**
+
+El proyecto está bien estructurado arquitectónicamente. El problema de
+FurnitureController fue UN INCIDENTE AISLADO de:
+- Código legado no actualizado
+- Falta de mantenimiento
+- Duplicación intencional por compatibilidad (que debió haberse eliminado)
+
+El resto del proyecto sigue buenas prácticas:
+✓ Una responsabilidad por controller
+✓ Sin duplicación funcional
+✓ Separación clara de responsabilidades
+✓ Convenciones consistentes
+
+═══════════════════════════════════════════════════════════════════════════════════════════
+
