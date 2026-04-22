@@ -1,7 +1,7 @@
 package com.mx.mbrl.service;
 
 import com.mx.mbrl.dto.ChangePasswordRequestDTO;
-import com.mx.mbrl.dto.CustomerRequestDTO;
+import com.mx.mbrl.dto.RegisterRequestDTO;
 import com.mx.mbrl.dto.JwtResponse;
 import com.mx.mbrl.dto.LoginRequestDTO;
 import com.mx.mbrl.entity.Customer;
@@ -30,17 +30,17 @@ public class AuthService {
 	private long jwtExpirationMs;
 
 	@Transactional
-	public Customer register(CustomerRequestDTO customerRequestDTO) {
-		log.info("Registrando nuevo cliente: {}", customerRequestDTO.getName());
+	public Customer register(RegisterRequestDTO dto) {
+		log.info("Registrando nuevo cliente: {}", dto.getName());
 
-		if (userRepository.findByEmail(customerRequestDTO.getEmail()).isPresent()) {
+		if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
 			throw new IllegalArgumentException("El email ya está registrado");
 		}
 
 		User user = new User();
-		user.setUsername(customerRequestDTO.getEmail().split("@")[0]);
-		user.setEmail(customerRequestDTO.getEmail());
-		user.setPassword(passwordEncoder.encode(customerRequestDTO.getPassword()));
+		user.setUsername(dto.getEmail().split("@")[0]);
+		user.setEmail(dto.getEmail());
+		user.setPassword(passwordEncoder.encode(dto.getPassword()));
 		user.setRole(User.Role.USER);
 
 		User savedUser = userRepository.save(user);
@@ -48,13 +48,13 @@ public class AuthService {
 
 		Customer customer = new Customer();
 		customer.setUser(savedUser);
-		customer.setName(customerRequestDTO.getName());
-		customer.setEmail(customerRequestDTO.getEmail());
-		customer.setPhone(customerRequestDTO.getPhone());
-		customer.setAddress(customerRequestDTO.getAddress());
-		customer.setCity(customerRequestDTO.getCity());
-		customer.setState(customerRequestDTO.getState());
-		customer.setPostalCode(customerRequestDTO.getPostalCode());
+		customer.setName(dto.getName());
+		customer.setEmail(dto.getEmail());
+		customer.setPhone(dto.getPhone());
+		customer.setAddress(dto.getAddress());
+		customer.setCity(dto.getCity());
+		customer.setState(dto.getState());
+		customer.setPostalCode(dto.getPostalCode());
 
 		Customer savedCustomer = customerRepository.save(customer);
 		log.info("Cliente creado con ID: {}", savedCustomer.getId());

@@ -1,5 +1,6 @@
 package com.mx.mbrl.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,6 +24,7 @@ public class User {
 	@Column(nullable = false, unique = true, length = 255)
 	private String email;
 
+	@JsonIgnore
 	@Column(nullable = false, length = 255)
 	private String password;
 

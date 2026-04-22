@@ -1,5 +1,6 @@
 package com.mx.mbrl.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Formula;
@@ -15,6 +16,7 @@ public class OrderItem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@JsonIgnore
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "order_id")
 	private Order order;
@@ -33,7 +35,6 @@ public class OrderItem {
 	private BigDecimal costPrice;
 
 	@Formula("quantity * unit_price")
-	@Column(name = "total_price", precision = 12, scale = 2)
 	private BigDecimal totalPrice;
 }
 

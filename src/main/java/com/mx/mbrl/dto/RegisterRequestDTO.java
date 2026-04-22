@@ -6,14 +6,19 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerRequestDTO {
+public class RegisterRequestDTO {
 	@NotBlank(message = "El nombre es requerido")
 	@Size(max = 255, message = "El nombre no puede exceder 255 caracteres")
 	private String name;
 
+	@NotBlank(message = "El email es requerido")
 	@Email(message = "El email debe ser válido")
 	@Size(max = 255, message = "El email no puede exceder 255 caracteres")
 	private String email;
+
+	@NotBlank(message = "La contraseña es requerida")
+	@Size(min = 8, max = 128, message = "La contraseña debe tener entre 8 y 128 caracteres")
+	private String password;
 
 	@Size(max = 20, message = "El teléfono no puede exceder 20 caracteres")
 	private String phone;
@@ -30,4 +35,3 @@ public class CustomerRequestDTO {
 	@Size(max = 20, message = "El código postal no puede exceder 20 caracteres")
 	private String postalCode;
 }
-

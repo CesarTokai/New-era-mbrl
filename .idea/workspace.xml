@@ -6,6 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="04614044-9f04-4f3b-a0cc-042bdd72219b" name="Changes" comment="Cambios grandes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/dto/CustomerRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/dto/CustomerRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/dto/OrderItemRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/dto/OrderItemRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/OrderItem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/OrderItem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/OrderService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/OrderService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +187,8 @@
       <workItem from="1776779304752" duration="486000" />
       <workItem from="1776785478506" duration="2005000" />
       <workItem from="1776801762482" duration="720000" />
-      <workItem from="1776864853280" duration="3109000" />
+      <workItem from="1776864853280" duration="3514000" />
+      <workItem from="1776889189160" duration="4369000" />
     </task>
     <task id="LOCAL-00001" summary="Cambios grandes">
       <option name="closed" value="true" />

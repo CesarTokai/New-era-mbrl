@@ -79,14 +79,14 @@ public class OrderService {
 			orderItem.setOrder(savedOrder);
 			orderItem.setProduct(product);
 			orderItem.setQuantity(itemDTO.getQuantity());
-			orderItem.setUnitPrice(itemDTO.getUnitPrice());
+			orderItem.setUnitPrice(product.getPrice());
 			orderItem.setCostPrice(product.getCostPrice());
 
 			OrderItem savedItem = orderItemRepository.save(orderItem);
 			items.add(savedItem);
 
 			// Sumar al subtotal
-			BigDecimal itemTotal = itemDTO.getUnitPrice().multiply(new BigDecimal(itemDTO.getQuantity()));
+			BigDecimal itemTotal = product.getPrice().multiply(new BigDecimal(itemDTO.getQuantity()));
 			subtotal = subtotal.add(itemTotal);
 
 			// Descontar stock y registrar movimiento

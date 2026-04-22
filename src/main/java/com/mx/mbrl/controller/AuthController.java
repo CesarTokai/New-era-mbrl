@@ -32,7 +32,7 @@ public class AuthController {
 
 	// POST /api/auth/register  — público
 	@PostMapping("/register")
-	public ResponseEntity<ApiResponse<Customer>> register(@Valid @RequestBody CustomerRequestDTO dto) {
+	public ResponseEntity<ApiResponse<Customer>> register(@Valid @RequestBody RegisterRequestDTO dto) {
 		log.info("Registrando nuevo cliente: {}", dto.getName());
 		try {
 			Customer customer = authService.register(dto);
