@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -93,6 +95,84 @@ public class ImageController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body(ApiResponse.error("Error al guardar la imagen", 500));
 		}
+	}
+
+	@PostMapping("/upload-multiple")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	public ResponseEntity<ApiResponse<List<String>>> uploadMultipleImages(
+			@RequestParam("files") List<MultipartFile> files) {
+
+		if (files == null || files.isEmpty()) {
+			return ResponseEntity.badRequest()
+					.body(ApiResponse.error("No se enviaron archivos", 400));
+		}
+		if (files.size() > 10) {
+			return ResponseEntity.badRequest()
+					.body(ApiResponse.error("Máximo 10 imágenes por producto", 400));
+		}
+
+		log.info("Subiendo {} imágenes", files.size());
+
+		List<String> uploadedUrls = new ArrayList<>();
+		List<String> errors = new ArrayList<>();
+
+		Path uploadPath = Paths.get(uploadDir);
+		try {
+			if (!Files.exists(uploadPath)) {
+				Files.createDirectories(uploadPath);
+			}
+		} catch (IOException e) {
+			log.error("Error creando directorio: {}", e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(ApiResponse.error("Error al crear directorio de uploads", 500));
+		}
+
+		for (MultipartFile file : files) {
+			if (file.isEmpty()) {
+				errors.add(file.getOriginalFilename() + ": archivo vacío");
+				continue;
+			}
+
+			String contentType = file.getContentType();
+			boolean validType = false;
+			for (String allowed : ALLOWED_TYPES) {
+				if (allowed.equals(contentType)) { validType = true; break; }
+			}
+			if (!validType) {
+				errors.add(file.getOriginalFilename() + ": tipo no permitido");
+				continue;
+			}
+
+			if (file.getSize() > maxFileSize) {
+				errors.add(file.getOriginalFilename() + ": excede 5MB");
+				continue;
+			}
+
+			try {
+				String extension = getExtension(file.getOriginalFilename());
+				String uniqueFileName = UUID.randomUUID().toString() + extension;
+				Path filePath = uploadPath.resolve(uniqueFileName);
+				Files.copy(file.getInputStream(), filePath);
+				uploadedUrls.add(baseUrl + "/uploads/images/" + uniqueFileName);
+				log.info("Imagen guardada: {}", uniqueFileName);
+			} catch (IOException e) {
+				log.error("Error guardando {}: {}", file.getOriginalFilename(), e.getMessage());
+				errors.add(file.getOriginalFilename() + ": error al guardar");
+			}
+		}
+
+		if (uploadedUrls.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body(ApiResponse.error("No se pudo subir ninguna imagen. Errores: " + String.join(", ", errors), 500));
+		}
+
+		String message = uploadedUrls.size() + " imagen(es) subida(s) exitosamente";
+		if (!errors.isEmpty()) {
+			message += ". Fallos: " + String.join(", ", errors);
+		}
+
+		return ResponseEntity.status(HttpStatus.CREATED)
+				.body(ApiResponse.success(uploadedUrls, message));
 	}
 
 	@DeleteMapping("/{fileName}")
