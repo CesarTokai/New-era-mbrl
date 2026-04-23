@@ -6,6 +6,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -45,6 +47,19 @@ public class Product {
 
 	@Column(name = "image_url", length = 500)
 	private String imageUrl;
+
+	@Column(length = 100)
+	private String color;
+
+	@Column(length = 100)
+	private String material;
+
+	@Column(length = 255)
+	private String dimensions;
+
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	@OrderBy("sortOrder ASC")
+	private List<ProductImage> images = new ArrayList<>();
 
 	@Column(name = "is_active")
 	private Boolean isActive = true;

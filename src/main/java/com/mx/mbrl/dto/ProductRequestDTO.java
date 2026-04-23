@@ -3,6 +3,7 @@ package com.mx.mbrl.dto;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -32,8 +33,22 @@ public class ProductRequestDTO {
 	@Size(max = 500, message = "La URL de imagen no puede exceder 500 caracteres")
 	private String imageUrl;
 
+	@Size(max = 100, message = "El color no puede exceder 100 caracteres")
+	private String color;
+
+	@Size(max = 100, message = "El material no puede exceder 100 caracteres")
+	private String material;
+
+	@Size(max = 255, message = "Las dimensiones no pueden exceder 255 caracteres")
+	private String dimensions;
+
+	@Size(max = 10, message = "No se pueden registrar más de 10 imágenes")
+	private List<String> imageUrls;
+
 	private Long brandId;
 
 	private Long categoryId;
+
+	private Boolean isActive;
 }
 

@@ -4,9 +4,11 @@ import com.mx.mbrl.dto.ProductRequestDTO;
 import com.mx.mbrl.entity.Brand;
 import com.mx.mbrl.entity.Category;
 import com.mx.mbrl.entity.Product;
+import com.mx.mbrl.entity.ProductImage;
 import com.mx.mbrl.repository.BrandRepository;
 import com.mx.mbrl.repository.CategoryRepository;
 import com.mx.mbrl.repository.OrderItemRepository;
+import com.mx.mbrl.repository.ProductImageRepository;
 import com.mx.mbrl.repository.ProductRepository;
 import com.mx.mbrl.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class ProductService {
 
 	private final ProductRepository productRepository;
+	private final ProductImageRepository productImageRepository;
 	private final BrandRepository brandRepository;
 	private final CategoryRepository categoryRepository;
 	private final OrderItemRepository orderItemRepository;
@@ -56,6 +59,9 @@ public class ProductService {
 		product.setStock(productRequestDTO.getStock() != null ? productRequestDTO.getStock() : 0);
 		product.setMinStock(productRequestDTO.getMinStock() != null ? productRequestDTO.getMinStock() : 5);
 		product.setImageUrl(productRequestDTO.getImageUrl());
+		product.setColor(productRequestDTO.getColor());
+		product.setMaterial(productRequestDTO.getMaterial());
+		product.setDimensions(productRequestDTO.getDimensions());
 		product.setBrand(brand);
 		product.setCategory(category);
 		product.setIsActive(true);
@@ -63,6 +69,9 @@ public class ProductService {
 		product.setUpdatedAt(LocalDateTime.now());
 
 		Product savedProduct = productRepository.save(product);
+
+		saveImages(savedProduct, productRequestDTO.getImageUrls());
+
 		log.info("✅ Producto creado con ID: {}", savedProduct.getId());
 		return savedProduct;
 	}
@@ -100,9 +109,20 @@ public class ProductService {
 			product.setMinStock(productRequestDTO.getMinStock());
 		}
 		product.setImageUrl(productRequestDTO.getImageUrl());
+		product.setColor(productRequestDTO.getColor());
+		product.setMaterial(productRequestDTO.getMaterial());
+		product.setDimensions(productRequestDTO.getDimensions());
+		if (productRequestDTO.getIsActive() != null) {
+			product.setIsActive(productRequestDTO.getIsActive());
+		}
 		product.setUpdatedAt(LocalDateTime.now());
 
 		Product updatedProduct = productRepository.save(product);
+
+		if (productRequestDTO.getImageUrls() != null) {
+			productImageRepository.deleteByProductId(updatedProduct.getId());
+			saveImages(updatedProduct, productRequestDTO.getImageUrls());
+		}
 		log.info("Producto actualizado con ID: {}", updatedProduct.getId());
 
 		return updatedProduct;
@@ -267,6 +287,18 @@ public class ProductService {
 
 		log.info("Se encontraron {} productos relacionados para productId: {}", sortedProducts.size(), productId);
 		return sortedProducts;
+	}
+
+	private void saveImages(Product product, java.util.List<String> imageUrls) {
+		if (imageUrls == null || imageUrls.isEmpty()) return;
+		int limit = Math.min(imageUrls.size(), 10);
+		for (int i = 0; i < limit; i++) {
+			ProductImage img = new ProductImage();
+			img.setProduct(product);
+			img.setImageUrl(imageUrls.get(i));
+			img.setSortOrder(i);
+			productImageRepository.save(img);
+		}
 	}
 }
 

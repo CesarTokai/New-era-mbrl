@@ -50,6 +50,12 @@ CREATE TABLE products (
                           stock INT NOT NULL DEFAULT 0,
                           min_stock INT DEFAULT 5,
                           image_url VARCHAR(500),
+
+    -- Atributos físicos
+                          color VARCHAR(100),
+                          material VARCHAR(100),
+                          dimensions VARCHAR(255),
+
     -- Control
                           is_active BOOLEAN DEFAULT TRUE,
                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -62,6 +68,19 @@ CREATE TABLE products (
                           INDEX idx_brand (brand_id),
                           INDEX idx_stock (stock),
                           INDEX idx_price (price)
+);
+
+-- =====================================================
+-- 3b. IMÁGENES DE PRODUCTO (máximo 10 por producto)
+-- =====================================================
+
+CREATE TABLE product_images (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    product_id BIGINT NOT NULL,
+    image_url VARCHAR(500) NOT NULL,
+    sort_order INT DEFAULT 0,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+    INDEX idx_product (product_id)
 );
 
 -- =====================================================
@@ -379,5 +398,15 @@ SELECT
     min_stock,
     (min_stock - stock) AS cantidad_faltante
 FROM products
-WHERE stock <= min_stock AND is_active = TRUE
+WHERE stock <= min_stock AND is_active = TRUE;
+
+-- =====================================================
+-- SETTINGS
+-- =====================================================
+
+CREATE TABLE settings (
+    `key` VARCHAR(100) PRIMARY KEY,
+    `value` LONGTEXT NOT NULL,
+    updated_at DATETIME
+);
 ORDER BY cantidad_faltante DESC;

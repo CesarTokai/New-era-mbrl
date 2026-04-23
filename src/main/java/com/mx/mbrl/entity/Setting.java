@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Setting {
 	@Id
-	@Column(length = 100)
+	@Column(name = "`key`", length = 100)
 	private String key;
 
 	@Column(columnDefinition = "LONGTEXT", nullable = false)

@@ -2,6 +2,8 @@ package com.mx.mbrl.dto;
 
 import lombok.*;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,5 +22,11 @@ public class ProductResponseDTO {
 	private Long categoryId;
 	private String categoryName;
 	private Boolean isActive;
+	private String color;
+	private String material;
+	private String dimensions;
+	private List<String> imageUrls;
+	private LocalDateTime createdAt;
+	private LocalDateTime updatedAt;
 }
 

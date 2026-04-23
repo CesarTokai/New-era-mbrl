@@ -4,6 +4,7 @@ import com.mx.mbrl.dto.ApiResponse;
 import com.mx.mbrl.dto.ProductRequestDTO;
 import com.mx.mbrl.dto.ProductResponseDTO;
 import com.mx.mbrl.entity.Product;
+import com.mx.mbrl.entity.ProductImage;
 import com.mx.mbrl.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -172,6 +173,10 @@ public class ProductController {
 	}
 
 	private ProductResponseDTO mapToResponseDTO(Product product) {
+		List<String> imageUrls = product.getImages().stream()
+				.map(ProductImage::getImageUrl)
+				.collect(Collectors.toList());
+
 		return new ProductResponseDTO(
 				product.getId(),
 				product.getName(),
@@ -185,7 +190,13 @@ public class ProductController {
 				product.getBrand() != null ? product.getBrand().getName() : null,
 				product.getCategory() != null ? product.getCategory().getId() : null,
 				product.getCategory() != null ? product.getCategory().getName() : null,
-				product.getIsActive()
+				product.getIsActive(),
+				product.getColor(),
+				product.getMaterial(),
+				product.getDimensions(),
+				imageUrls,
+				product.getCreatedAt(),
+				product.getUpdatedAt()
 		);
 	}
 }
