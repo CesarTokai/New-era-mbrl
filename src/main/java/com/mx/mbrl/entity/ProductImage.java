@@ -1,5 +1,6 @@
 package com.mx.mbrl.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,6 +19,7 @@ public class ProductImage {
     @JoinColumn(name = "product_id", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @JsonIgnore
     private Product product;
 
     @Column(name = "image_url", nullable = false, length = 500)

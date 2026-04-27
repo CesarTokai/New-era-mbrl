@@ -76,6 +76,8 @@ public class SecurityConfig {
 				.requestMatchers(HttpMethod.POST, "/api/auth/forgot-password").permitAll()
 				.requestMatchers(HttpMethod.GET,  "/api/auth/validate-reset-token").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/auth/reset-password").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/settings/home").permitAll()
 				// Todos los GETs son públicos
 				.requestMatchers(HttpMethod.GET, "/**").permitAll()
 				// Actuator

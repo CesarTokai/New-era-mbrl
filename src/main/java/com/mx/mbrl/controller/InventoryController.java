@@ -88,7 +88,7 @@ public class InventoryController {
 	public ResponseEntity<ApiResponse<Void>> removeStock(
 			@RequestParam Long productId,
 			@RequestParam Integer quantity,
-			@RequestParam String reason) {
+			@RequestParam(required = false, defaultValue = "MANUAL") String reason) {
 		log.info("Removiendo stock del producto ID: {}, cantidad: {}", productId, quantity);
 
 		try {

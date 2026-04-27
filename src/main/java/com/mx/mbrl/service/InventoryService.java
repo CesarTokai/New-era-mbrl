@@ -25,17 +25,20 @@ public class InventoryService {
 
 	@Transactional
 	public void addStock(Long productId, Integer quantity, String referenceType, Long referenceId, String notes) {
-		log.info("Agregando stock: productId={}, quantity={}, referenceType={}, referenceId={}", 
+		log.info("Agregando stock: productId={}, quantity={}, referenceType={}, referenceId={}",
 				productId, quantity, referenceType, referenceId);
 
 		if (quantity <= 0) {
 			throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
 		}
 
-		// Incrementar stock del producto
-		Product product = productService.incrementStock(productId, quantity);
+		Product product = productRepository.findById(productId)
+				.orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con ID: " + productId));
 
-		// Crear movimiento de inventario
+		product.setStock(product.getStock() + quantity);
+		product.setUpdatedAt(LocalDateTime.now());
+		productRepository.save(product);
+
 		InventoryMovement movement = new InventoryMovement();
 		movement.setProduct(product);
 		movement.setMovementType(InventoryMovement.MovementType.ENTRADA);
@@ -51,24 +54,30 @@ public class InventoryService {
 
 	@Transactional
 	public void removeStock(Long productId, Integer quantity, String reason, Long userId) {
-		log.info("Removiendo stock: productId={}, quantity={}, reason={}, userId={}", 
+		log.info("Removiendo stock: productId={}, quantity={}, reason={}, userId={}",
 				productId, quantity, reason, userId);
 
 		if (quantity <= 0) {
 			throw new IllegalArgumentException("La cantidad debe ser mayor a 0");
 		}
 
-		// Validar usuario si se proporciona
 		User user = null;
 		if (userId != null) {
 			user = userRepository.findById(userId)
 					.orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado con ID: " + userId));
 		}
 
-		// Decrementar stock del producto
-		Product product = productService.decrementStock(productId, quantity);
+		Product product = productRepository.findById(productId)
+				.orElseThrow(() -> new IllegalArgumentException("Producto no encontrado con ID: " + productId));
 
-		// Crear movimiento de inventario
+		if (product.getStock() < quantity) {
+			throw new IllegalArgumentException("Stock insuficiente para el producto ID: " + productId);
+		}
+
+		product.setStock(product.getStock() - quantity);
+		product.setUpdatedAt(LocalDateTime.now());
+		productRepository.save(product);
+
 		InventoryMovement movement = new InventoryMovement();
 		movement.setProduct(product);
 		movement.setMovementType(InventoryMovement.MovementType.SALIDA);

@@ -25,7 +25,6 @@ public class ProductController {
 	private final ProductService productService;
 
 	@GetMapping
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<List<ProductResponseDTO>>> getAllProducts() {
 		log.info("Obteniendo todos los productos");
 
@@ -44,7 +43,6 @@ public class ProductController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<ProductResponseDTO>> getProductById(@PathVariable Long id) {
 		log.info("Obteniendo producto ID: {}", id);
 
@@ -65,7 +63,7 @@ public class ProductController {
 	}
 
 	@GetMapping("/low-stock")
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")  // solo admin/user
 	public ResponseEntity<ApiResponse<List<ProductResponseDTO>>> getLowStockProducts() {
 		log.info("Obteniendo productos con stock bajo");
 
@@ -84,7 +82,6 @@ public class ProductController {
 	}
 
 	@GetMapping("/{id}/related")
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	public ResponseEntity<ApiResponse<List<ProductResponseDTO>>> getRelatedProducts(
 			@PathVariable Long id,
 			@RequestParam(defaultValue = "5") int limit) {

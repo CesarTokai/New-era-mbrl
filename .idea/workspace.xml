@@ -6,7 +6,15 @@
   <component name="ChangeListManager">
     <list default="true" id="04614044-9f04-4f3b-a0cc-042bdd72219b" name="Changes" comment="Cambios grandes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/ImageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/ImageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/BrandController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/BrandController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/CategoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/CategoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/InventoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/InventoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/ProductImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/entity/ProductImage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/InventoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/mx/mbrl/service/InventoryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -189,7 +197,16 @@
       <workItem from="1776968338239" duration="18000" />
       <workItem from="1776976515435" duration="3576000" />
       <workItem from="1776985392470" duration="34000" />
-      <workItem from="1776985509673" duration="939000" />
+      <workItem from="1776985509673" duration="1458000" />
+      <workItem from="1777064819353" duration="76000" />
+      <workItem from="1777066573258" duration="12000" />
+      <workItem from="1777071885494" duration="17000" />
+      <workItem from="1777072197815" duration="6000" />
+      <workItem from="1777072451185" duration="151000" />
+      <workItem from="1777094093193" duration="599000" />
+      <workItem from="1777298198122" duration="243000" />
+      <workItem from="1777298478655" duration="825000" />
+      <workItem from="1777320693001" duration="4203000" />
     </task>
     <task id="LOCAL-00001" summary="Cambios grandes">
       <option name="closed" value="true" />
